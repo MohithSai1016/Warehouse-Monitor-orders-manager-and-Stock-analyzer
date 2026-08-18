@@ -23,6 +23,9 @@ function MainLayout() {
   if (!isAuthenticated) {
     return (
       <>
+        <a href="#auth-main" className="skip-to-content">
+          Skip to login form
+        </a>
         <LoginScreen />
         <ToastContainer />
       </>
@@ -31,9 +34,13 @@ function MainLayout() {
 
   return (
     <div className="app animate-app-fade-in">
+      <a href="#main-content" className="skip-to-content">
+        Skip to main operations dashboard
+      </a>
+
       <Sidebar />
 
-      <main>
+      <main id="main-content" tabIndex="-1" role="main" aria-label="Warehouse Operations Workspace">
         <Header />
         <ScenarioBar />
 
@@ -43,10 +50,10 @@ function MainLayout() {
         )}
 
         {/* Dynamic View Mode Router */}
-        <div className="content-grid">
+        <section className="content-grid" aria-label="Active View Content">
           {viewMode === 'MAP' && (
             <>
-              <div className={`map-layout ${selectedBin ? 'with-sidebar' : 'full-width'}`}>
+              <div className={`map-layout ${selectedBin ? 'with-sidebar' : 'full-width'}`} role="region" aria-label="Interactive 2D Warehouse Floor Map">
                 <WarehouseMap />
                 {selectedBin && <BinDetailModal />}
               </div>
@@ -55,7 +62,9 @@ function MainLayout() {
           )}
 
           {viewMode === 'AGV_SIMULATION' && (
-            <AgvSimulationView />
+            <div role="region" aria-label="3D Autonomous Mobile Robot Simulation Console">
+              <AgvSimulationView />
+            </div>
           )}
 
           {viewMode === 'ORDERS' && (
@@ -80,7 +89,7 @@ function MainLayout() {
           {viewMode === 'PICKER' && (
             <PickerConsole />
           )}
-        </div>
+        </section>
       </main>
 
       <ToastContainer />

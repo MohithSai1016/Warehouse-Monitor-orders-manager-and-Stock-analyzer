@@ -15,6 +15,7 @@ import {
 } from '../engine/allocationEngine';
 import { buildOrderPickRoute, solveTspPickRoute } from '../engine/routingEngine';
 import { generateRandomOrder, createVipConflictScenario, generateRushHourBatch } from '../engine/simulationEngine';
+import { SafeStorage, sanitizeInput, auditLogger } from '../utils/security';
 import confetti from 'canvas-confetti';
 
 const WmsContext = createContext(null);
@@ -182,7 +183,7 @@ export function WmsProvider({ children }) {
   }));
 
   // Master User Profile Info (Mohith Sai - Webdesigner & Owner)
-  const userProfile = {
+  const MASTER_USER_PROFILE = {
     name: 'Mohith Sai',
     role: 'Webdesigner & Owner',
     phone: '7675996669',
@@ -291,15 +292,36 @@ export function WmsProvider({ children }) {
   const [viewMode, setViewMode] = useState('MAP');
 
   // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const savedUser = SafeStorage.get('auth_user');
+    return !!savedUser;
+  });
+
+  const [userProfile, setUserProfile] = useState(() => {
+    const savedUser = SafeStorage.get('auth_user');
+    return savedUser || MASTER_USER_PROFILE;
+  });
 
   const loginUser = useCallback((userPayload) => {
+    const safeUser = {
+      username: sanitizeInput(userPayload?.username || 'MohithSai'),
+      name: sanitizeInput(userPayload?.name || 'Mohith Sai'),
+      role: userPayload?.role || 'MANAGER',
+      phone: '7675912345',
+      email: 'mohith@sai-warehouse.ai',
+      avatar: 'MS'
+    };
+    SafeStorage.set('auth_user', safeUser);
+    auditLogger.log('USER_LOGIN', { username: safeUser.username, role: safeUser.role }, safeUser.username);
+    setUserProfile(safeUser);
     setIsAuthenticated(true);
-    setRole(userPayload?.role || 'MANAGER');
+    setRole(safeUser.role);
     setViewMode('MAP');
   }, []);
 
   const logoutUser = useCallback(() => {
+    SafeStorage.remove('auth_user');
+    auditLogger.log('USER_LOGOUT', {}, 'USER');
     setIsAuthenticated(false);
     setViewMode('MAP');
   }, []);

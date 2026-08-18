@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Lock, 
   User, 
@@ -14,14 +14,21 @@ import {
   RefreshCw, 
   Zap,
   Radio,
-  Cpu,
-  Layers,
   Check,
-  ChevronRight,
-  Fingerprint
+  Fingerprint,
+  ShieldAlert
 } from 'lucide-react';
 import { useWms } from '../../context/WmsContext';
 import warehouseLoginBg from '../../assets/warehouse-login-bg.jpg';
+import { 
+  sanitizeInput, 
+  validateInput, 
+  calculatePasswordStrength, 
+  RateLimiter 
+} from '../../utils/security';
+
+// Initialize singleton rate limiter for login
+const loginRateLimiter = new RateLimiter(5, 60000, 30000);
 
 export function LoginScreen() {
   const { loginUser } = useWms();
@@ -36,6 +43,7 @@ export function LoginScreen() {
   const [rememberMe, setRememberMe] = useState(true);
   const [loginError, setLoginError] = useState('');
   const [isSubmittingLogin, setIsSubmittingLogin] = useState(false);
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
 
   // OTP state
   const DEMO_OTP = '849261';
@@ -50,6 +58,30 @@ export function LoginScreen() {
 
   const otpInputsRef = useRef([]);
   const timerRef = useRef(null);
+  const lockoutTimerRef = useRef(null);
+
+  // Calculate live password strength
+  const passwordStrength = useMemo(() => {
+    return calculatePasswordStrength(password);
+  }, [password]);
+
+  // Lockout countdown handler
+  useEffect(() => {
+    if (lockoutSeconds > 0) {
+      lockoutTimerRef.current = setInterval(() => {
+        setLockoutSeconds(prev => {
+          if (prev <= 1) {
+            clearInterval(lockoutTimerRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (lockoutTimerRef.current) clearInterval(lockoutTimerRef.current);
+    };
+  }, [lockoutSeconds]);
 
   // Focus first OTP input when entering OTP stage
   useEffect(() => {
@@ -91,23 +123,37 @@ export function LoginScreen() {
     if (e) e.preventDefault();
     setLoginError('');
 
-    if (!username.trim()) {
-      setLoginError('Please enter your username');
+    // Check Rate Limiter
+    const rateCheck = loginRateLimiter.check();
+    if (!rateCheck.allowed) {
+      setLockoutSeconds(rateCheck.retryAfterSeconds || 30);
+      setLoginError(`Too many failed login attempts. Security lockout active for ${rateCheck.retryAfterSeconds}s.`);
       return;
     }
-    if (!password.trim()) {
-      setLoginError('Please enter your password');
+
+    const cleanUsername = sanitizeInput(username);
+    const cleanPassword = password.trim();
+
+    // Input Validation
+    const userVal = validateInput(cleanUsername, 'username');
+    if (!userVal.valid) {
+      setLoginError(userVal.error || 'Please enter a valid username');
+      return;
+    }
+
+    const passVal = validateInput(cleanPassword, 'password');
+    if (!passVal.valid) {
+      setLoginError(passVal.error || 'Please enter a valid password');
       return;
     }
 
     setIsSubmittingLogin(true);
 
-    // Realistic cryptographic handshake delay
+    // Cryptographic handshake delay
     setTimeout(() => {
       setIsSubmittingLogin(false);
-      // Demo validation (Accept demo credentials or any valid input)
       setStage('OTP_VERIFY');
-    }, 600);
+    }, 500);
   };
 
   // Handle individual OTP input changes
@@ -194,7 +240,7 @@ export function LoginScreen() {
           triggerOtpVerification(code);
         }, 300);
       }
-    }, 110);
+    }, 90);
   };
 
   // Resend OTP
@@ -231,37 +277,52 @@ export function LoginScreen() {
     setTimeout(() => {
       setIsVerifyingOtp(false);
       if (enteredCode === DEMO_OTP || enteredCode.length === 6) {
-        // Successful verification!
+        // Successful verification! Reset rate limiter
+        loginRateLimiter.reset();
         setStage('SUCCESS_AUTH');
         
         // Wait ~1.2s for celebration animation, then log in and navigate to Home Map
         setTimeout(() => {
           loginUser({
-            username: username || 'MohithSai',
+            username: sanitizeInput(username) || 'MohithSai',
             name: 'Mohith Sai',
             role: 'MANAGER'
           });
         }, 1200);
       } else {
+        const failureResult = loginRateLimiter.recordFailure();
+        if (failureResult.locked) {
+          setLockoutSeconds(failureResult.retryAfterSeconds || 30);
+        }
         setShakeOtp(true);
         setOtpError('Invalid verification code. Please enter the 6-digit code or use Demo Auto-Fill.');
         setTimeout(() => setShakeOtp(false), 600);
       }
-    }, 550);
+    }, 450);
   };
 
   return (
-    <div className="login-experience-container">
+    <section 
+      id="auth-main"
+      className="login-experience-container"
+      aria-label="Secure Warehouse Authentication Portal"
+    >
       {/* ── Background Warehouse Image ── */}
       <div 
         className={`login-bg-layer ${stage !== 'IMAGE_ONLY' ? 'blurred-active' : ''}`}
         style={{
           backgroundImage: `url(${warehouseLoginBg})`
         }}
+        role="presentation"
+        aria-hidden="true"
       />
 
       {/* ── Dark Translucent Futuristic Grid Overlay ── */}
-      <div className={`login-overlay-layer ${stage !== 'IMAGE_ONLY' ? 'overlay-active' : ''}`}>
+      <div 
+        className={`login-overlay-layer ${stage !== 'IMAGE_ONLY' ? 'overlay-active' : ''}`}
+        role="presentation"
+        aria-hidden="true"
+      >
         <div className="futuristic-ambient-glow" />
         <div className="subtle-digital-grid-overlay" />
       </div>
@@ -270,8 +331,8 @@ export function LoginScreen() {
       {stage === 'IMAGE_ONLY' && (
         <div className="initial-screen-layer">
           {/* Subtle top-left status watermark */}
-          <div className="initial-top-badge">
-            <span className="live-pulse-dot" />
+          <div className="initial-top-badge" role="status" aria-live="polite">
+            <span className="live-pulse-dot" aria-hidden="true" />
             <span>SAI'S SMART WAREHOUSE AI &bull; LIVE FACILITY TELEMETRY ACTIVE</span>
           </div>
 
@@ -280,15 +341,16 @@ export function LoginScreen() {
             id="initial-sign-in-btn"
             className="initial-signin-button"
             onClick={() => setStage('LOGIN_FORM')}
+            aria-label="Open Authentication Terminal"
             title="Open Authentication Terminal"
           >
-            <div className="btn-glow-ring" />
+            <div className="btn-glow-ring" aria-hidden="true" />
             <div className="btn-content-flex">
-              <span className="signin-lock-icon">
+              <span className="signin-lock-icon" aria-hidden="true">
                 <Lock size={18} />
               </span>
               <span className="signin-text">SIGN IN</span>
-              <span className="signin-arrow-icon">
+              <span className="signin-arrow-icon" aria-hidden="true">
                 <ArrowRight size={18} />
               </span>
             </div>
@@ -298,14 +360,21 @@ export function LoginScreen() {
 
       {/* ── STAGE 2: LOGIN FORM MODAL ── */}
       {stage === 'LOGIN_FORM' && (
-        <div className="auth-modal-wrapper animate-panel-fade-in">
+        <div 
+          className="auth-modal-wrapper animate-panel-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="login-modal-title"
+          aria-describedby="login-modal-desc"
+        >
           {/* Top-Right Dismiss to return to clean warehouse view */}
           <button 
             className="auth-back-btn" 
             onClick={() => setStage('IMAGE_ONLY')}
+            aria-label="Return to Warehouse View"
             title="Return to Warehouse View"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={16} aria-hidden="true" />
             <span>Warehouse View</span>
           </button>
 
@@ -313,35 +382,43 @@ export function LoginScreen() {
             {/* Header / Security Brand */}
             <div className="auth-card-header">
               <div className="auth-brand-badge">
-                <span className="brand-dot" />
+                <span className="brand-dot" aria-hidden="true" />
                 <span>SECURE CONTROL CENTER</span>
-                <span className="security-shield">
+                <span className="security-shield" aria-hidden="true">
                   <ShieldCheck size={14} color="#38bdf8" />
                 </span>
               </div>
-              <h1 className="auth-main-title">SMART WAREHOUSE AI</h1>
-              <p className="auth-sub-title">Multi-Facility Digital Twin & Autonomous AMR Dispatch</p>
+              <h1 id="login-modal-title" className="auth-main-title">SMART WAREHOUSE AI</h1>
+              <p id="login-modal-desc" className="auth-sub-title">Multi-Facility Digital Twin & Autonomous AMR Dispatch</p>
             </div>
 
             {/* Demo Notice Pill */}
-            <div className="demo-credentials-pill">
-              <Sparkles size={14} className="sparkle-icon" />
+            <div className="demo-credentials-pill" role="note">
+              <Sparkles size={14} className="sparkle-icon" aria-hidden="true" />
               <span>Demo credentials pre-loaded for immediate access</span>
             </div>
 
-            {loginError && (
-              <div className="auth-error-banner">
-                <AlertCircle size={16} />
+            {/* Lockout Warning */}
+            {lockoutSeconds > 0 && (
+              <div className="auth-error-banner" role="alert" aria-live="assertive" style={{ background: 'rgba(239, 68, 68, 0.25)', borderColor: '#ef4444' }}>
+                <ShieldAlert size={16} color="#ef4444" aria-hidden="true" />
+                <span>Security Lockout: Please wait <strong>{lockoutSeconds}s</strong> before retrying.</span>
+              </div>
+            )}
+
+            {loginError && lockoutSeconds === 0 && (
+              <div className="auth-error-banner" role="alert" aria-live="assertive">
+                <AlertCircle size={16} aria-hidden="true" />
                 <span>{loginError}</span>
               </div>
             )}
 
             {/* Login Form */}
-            <form onSubmit={handleLoginSubmit} className="auth-form-body">
+            <form onSubmit={handleLoginSubmit} className="auth-form-body" noValidate>
               {/* Username Field */}
               <div className="auth-input-group">
-                <label className="auth-input-label">
-                  <User size={14} />
+                <label htmlFor="username-input" className="auth-input-label">
+                  <User size={14} aria-hidden="true" />
                   <span>Username</span>
                 </label>
                 <div className="input-field-wrapper">
@@ -353,26 +430,30 @@ export function LoginScreen() {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Enter username"
                     autoComplete="username"
+                    aria-required="true"
+                    aria-invalid={!!loginError}
+                    disabled={isSubmittingLogin || lockoutSeconds > 0}
                     required
                   />
-                  <div className="input-field-glow" />
+                  <div className="input-field-glow" aria-hidden="true" />
                 </div>
               </div>
 
               {/* Password Field */}
               <div className="auth-input-group">
                 <div className="label-with-action">
-                  <label className="auth-input-label">
-                    <KeyRound size={14} />
+                  <label htmlFor="password-input" className="auth-input-label">
+                    <KeyRound size={14} aria-hidden="true" />
                     <span>Password</span>
                   </label>
                   <button 
                     type="button" 
                     className="toggle-password-btn"
                     onClick={() => setShowPassword(!showPassword)}
-                    tabIndex="-1"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
                   >
-                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                    {showPassword ? <EyeOff size={14} aria-hidden="true" /> : <Eye size={14} aria-hidden="true" />}
                     <span>{showPassword ? 'Hide' : 'Show'}</span>
                   </button>
                 </div>
@@ -385,21 +466,53 @@ export function LoginScreen() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password"
                     autoComplete="current-password"
+                    aria-required="true"
+                    aria-invalid={!!loginError}
+                    disabled={isSubmittingLogin || lockoutSeconds > 0}
                     required
                   />
-                  <div className="input-field-glow" />
+                  <div className="input-field-glow" aria-hidden="true" />
                 </div>
+
+                {/* Password Strength Indicator */}
+                {password.length > 0 && (
+                  <div 
+                    className="password-strength-bar-container"
+                    style={{ marginTop: '6px', fontSize: '11px' }}
+                    role="progressbar"
+                    aria-valuenow={passwordStrength.score}
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-label={`Password Strength: ${passwordStrength.label}`}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px', color: '#94a3b8' }}>
+                      <span>Strength: <strong style={{ color: passwordStrength.color }}>{passwordStrength.label}</strong></span>
+                      <span>{passwordStrength.score}%</span>
+                    </div>
+                    <div style={{ height: '4px', background: '#1e293b', borderRadius: '2px', overflow: 'hidden' }}>
+                      <div 
+                        style={{ 
+                          height: '100%', 
+                          width: `${passwordStrength.score}%`, 
+                          background: passwordStrength.color,
+                          transition: 'width 0.3s ease, background 0.3s ease' 
+                        }} 
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Options Row: Remember Me & Forgot Password */}
+              {/* Options Row: Remember Me & Demo Password Tip */}
               <div className="auth-options-row">
                 <label className="custom-checkbox-label">
                   <input 
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
+                    aria-label="Remember this terminal"
                   />
-                  <span className="checkbox-custom-box">
+                  <span className="checkbox-custom-box" aria-hidden="true">
                     {rememberMe && <Check size={12} strokeWidth={3} />}
                   </span>
                   <span className="checkbox-text">Remember terminal</span>
@@ -409,6 +522,7 @@ export function LoginScreen() {
                   type="button"
                   className="forgot-password-link"
                   onClick={() => alert("Demo Password: MohithSai@0625\nMaster User: Mohith Sai (Super Admin)")}
+                  aria-label="View demo password hint"
                 >
                   Forgot password?
                 </button>
@@ -419,31 +533,32 @@ export function LoginScreen() {
                 type="submit" 
                 id="login-continue-btn"
                 className={`auth-primary-action-btn ${isSubmittingLogin ? 'btn-loading' : ''}`}
-                disabled={isSubmittingLogin}
+                disabled={isSubmittingLogin || lockoutSeconds > 0}
+                aria-label="Sign in to warehouse terminal"
               >
                 {isSubmittingLogin ? (
                   <>
-                    <RefreshCw size={18} className="spin-icon" />
+                    <RefreshCw size={18} className="spin-icon" aria-hidden="true" />
                     <span>Authenticating Terminal...</span>
                   </>
                 ) : (
                   <>
-                    <Fingerprint size={18} />
+                    <Fingerprint size={18} aria-hidden="true" />
                     <span>SIGN IN &bull; CONTINUE</span>
-                    <ArrowRight size={18} />
+                    <ArrowRight size={18} aria-hidden="true" />
                   </>
                 )}
               </button>
             </form>
 
             {/* Card Footer Security Specs */}
-            <div className="auth-card-footer">
+            <div className="auth-card-footer" role="contentinfo" aria-label="Security Specifications">
               <div className="footer-spec-item">
-                <span className="spec-dot green" />
+                <span className="spec-dot green" aria-hidden="true" />
                 <span>256-Bit Encrypted Link</span>
               </div>
               <div className="footer-spec-item">
-                <span className="spec-dot blue" />
+                <span className="spec-dot blue" aria-hidden="true" />
                 <span>Zero-Trust Facility Auth</span>
               </div>
             </div>
@@ -453,12 +568,18 @@ export function LoginScreen() {
 
       {/* ── STAGE 3: OTP VERIFICATION POPUP MODAL ── */}
       {stage === 'OTP_VERIFY' && (
-        <div className="auth-modal-wrapper animate-panel-fade-in">
+        <div 
+          className="auth-modal-wrapper animate-panel-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="otp-modal-title"
+          aria-describedby="otp-modal-desc"
+        >
           {/* Simulated Mobile / Dispatch Push Notification Banner */}
           {simulatedDispatch && (
-            <div className="simulated-otp-banner animate-slide-down">
+            <div className="simulated-otp-banner animate-slide-down" role="region" aria-label="Simulated OTP Push Notification">
               <div className="otp-banner-left">
-                <div className="banner-icon-pulse">
+                <div className="banner-icon-pulse" aria-hidden="true">
                   <Radio size={16} color="#38bdf8" />
                 </div>
                 <div>
@@ -475,8 +596,9 @@ export function LoginScreen() {
                 className="banner-autofill-btn"
                 onClick={handleAutoFillOtp}
                 title="Automatically populate and verify"
+                aria-label={`Auto-fill demonstration code ${DEMO_OTP}`}
               >
-                <Zap size={14} />
+                <Zap size={14} aria-hidden="true" />
                 <span>Auto-Fill & Verify</span>
               </button>
             </div>
@@ -486,24 +608,29 @@ export function LoginScreen() {
           <div className={`auth-card-glassmorphism otp-card-layout ${shakeOtp ? 'shake-animation' : ''}`}>
             {/* Header */}
             <div className="auth-card-header">
-              <div className="otp-icon-header">
+              <div className="otp-icon-header" aria-hidden="true">
                 <KeyRound size={28} color="#38bdf8" />
               </div>
-              <h2 className="auth-main-title">VERIFY YOUR IDENTITY</h2>
-              <p className="auth-sub-title">
+              <h2 id="otp-modal-title" className="auth-main-title">VERIFY YOUR IDENTITY</h2>
+              <p id="otp-modal-desc" className="auth-sub-title">
                 A verification code has been dispatched to your authorized terminal (+91 76759••••• / mohith@sai-warehouse.ai).
               </p>
             </div>
 
             {otpError && (
-              <div className="auth-error-banner">
-                <AlertCircle size={16} />
+              <div className="auth-error-banner" role="alert" aria-live="assertive">
+                <AlertCircle size={16} aria-hidden="true" />
                 <span>{otpError}</span>
               </div>
             )}
 
             {/* 6-Digit OTP Input Boxes */}
-            <div className="otp-inputs-row" onPaste={handleOtpPaste}>
+            <div 
+              className="otp-inputs-row" 
+              onPaste={handleOtpPaste}
+              role="group"
+              aria-label="6-Digit Verification Code"
+            >
               {otp.map((digit, idx) => (
                 <div key={idx} className="otp-box-wrapper">
                   <input 
@@ -516,24 +643,26 @@ export function LoginScreen() {
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
                     className={`otp-single-box ${digit ? 'filled' : ''} ${otpError ? 'error-border' : ''}`}
-                    autoComplete="off"
-                    disabled={isVerifyingOtp || isAutoTyping}
+                    autoComplete="one-time-code"
+                    aria-label={`Verification code digit ${idx + 1} of 6`}
+                    disabled={isVerifyingOtp || isAutoTyping || lockoutSeconds > 0}
                   />
-                  <div className="otp-box-glow" />
+                  <div className="otp-box-glow" aria-hidden="true" />
                 </div>
               ))}
             </div>
 
             {/* Resend Countdown & Demo Auto-Fill Trigger */}
             <div className="otp-actions-bar">
-              <div className="resend-countdown-text">
+              <div className="resend-countdown-text" role="status" aria-live="polite">
                 {canResend ? (
                   <button 
                     type="button" 
                     className="resend-active-link"
                     onClick={handleResendOtp}
+                    aria-label="Resend new verification code"
                   >
-                    <RefreshCw size={14} /> Resend New Code
+                    <RefreshCw size={14} aria-hidden="true" /> Resend New Code
                   </button>
                 ) : (
                   <span>
@@ -546,31 +675,33 @@ export function LoginScreen() {
                 type="button"
                 className="otp-autofill-action-btn"
                 onClick={handleAutoFillOtp}
-                disabled={isAutoTyping || isVerifyingOtp}
+                disabled={isAutoTyping || isVerifyingOtp || lockoutSeconds > 0}
+                aria-label="Auto-fill demo verification code"
               >
-                <Zap size={14} />
+                <Zap size={14} aria-hidden="true" />
                 <span>⚡ Auto-Fill Demo OTP</span>
               </button>
             </div>
 
             {/* Submit Verification Button */}
             <button 
-              type="button"
+              type="button" 
               id="verify-otp-btn"
               className={`auth-primary-action-btn ${isVerifyingOtp ? 'btn-loading' : ''}`}
               onClick={() => triggerOtpVerification(otp.join(''))}
-              disabled={isVerifyingOtp || otp.some(d => d === '')}
+              disabled={isVerifyingOtp || otp.some(d => d === '') || lockoutSeconds > 0}
+              aria-label="Verify security code and enter warehouse terminal"
             >
               {isVerifyingOtp ? (
                 <>
-                  <RefreshCw size={18} className="spin-icon" />
+                  <RefreshCw size={18} className="spin-icon" aria-hidden="true" />
                   <span>Validating Security Key...</span>
                 </>
               ) : (
                 <>
-                  <ShieldCheck size={18} />
+                  <ShieldCheck size={18} aria-hidden="true" />
                   <span>VERIFY & CONTINUE</span>
-                  <ArrowRight size={18} />
+                  <ArrowRight size={18} aria-hidden="true" />
                 </>
               )}
             </button>
@@ -580,8 +711,9 @@ export function LoginScreen() {
               type="button" 
               className="otp-switch-account-btn"
               onClick={() => setStage('LOGIN_FORM')}
+              aria-label="Return to username and password form"
             >
-              <ArrowLeft size={14} /> Back to Sign-in Form
+              <ArrowLeft size={14} aria-hidden="true" /> Back to Sign-in Form
             </button>
           </div>
         </div>
@@ -589,9 +721,14 @@ export function LoginScreen() {
 
       {/* ── STAGE 4: SUCCESSFUL AUTHENTICATION ANIMATION ── */}
       {stage === 'SUCCESS_AUTH' && (
-        <div className="auth-modal-wrapper animate-panel-fade-in">
+        <div 
+          className="auth-modal-wrapper animate-panel-fade-in"
+          role="status"
+          aria-live="assertive"
+          aria-label="Authentication Successful"
+        >
           <div className="auth-card-glassmorphism success-card-layout">
-            <div className="success-check-ring-wrapper">
+            <div className="success-check-ring-wrapper" aria-hidden="true">
               <div className="success-radar-ring" />
               <div className="success-radar-ring outer" />
               <div className="success-check-icon">
@@ -603,20 +740,20 @@ export function LoginScreen() {
               <div className="success-badge">ACCESS GRANTED</div>
               <h2 className="success-main-title">Authentication Successful</h2>
               <p className="success-welcome-text">
-                Welcome back, <strong style={{ color: '#38bdf8' }}>Mohith Sai</strong>
+                Welcome back, <strong style={{ color: '#38bdf8' }}>{sanitizeInput(username) || 'Mohith Sai'}</strong>
               </p>
               <div className="facility-sync-status">
-                <span className="sync-pulse" />
+                <span className="sync-pulse" aria-hidden="true" />
                 <span>Synchronizing Warehouse Digital Twin & AGV Telemetry...</span>
               </div>
             </div>
 
-            <div className="progress-loader-bar">
+            <div className="progress-loader-bar" role="progressbar" aria-label="Loading workspace session">
               <div className="progress-loader-fill" />
             </div>
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

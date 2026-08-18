@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { 
   X, 
   Phone, 
@@ -8,10 +8,49 @@ import {
   CheckCircle2, 
   Copy, 
   Sparkles,
-  Building2
+  Building2,
+  Lock,
+  LogOut
 } from 'lucide-react';
 
-export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
+export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, addToast }) {
+  const modalRef = useRef(null);
+
+  // Close on Escape key and trap focus
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+      // Focus trapping
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const copyToClipboard = (text, label) => {
@@ -33,6 +72,7 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
     <div 
       className="profile-modal-overlay"
       onClick={onClose}
+      role="presentation"
       style={{
         position: 'fixed',
         top: 0,
@@ -48,8 +88,13 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
       }}
     >
       <div 
+        ref={modalRef}
         className="profile-modal-card"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="profile-modal-title"
+        aria-describedby="profile-modal-role"
         style={{
           width: '100%',
           maxWidth: '460px',
@@ -89,13 +134,14 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
                 gap: '4px'
               }}
             >
-              <Sparkles size={11} color="#38bdf8" />
+              <Sparkles size={11} color="#38bdf8" aria-hidden="true" />
               SYSTEM OWNER &amp; ARCHITECT
             </span>
           </div>
 
           <button
             onClick={onClose}
+            aria-label="Close profile modal"
             style={{
               background: 'rgba(0, 0, 0, 0.4)',
               border: 'none',
@@ -109,7 +155,7 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
               transition: 'background 0.15s'
             }}
           >
-            <X size={15} />
+            <X size={15} aria-hidden="true" />
           </button>
         </div>
 
@@ -138,6 +184,7 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
                 color: '#ffffff',
                 boxShadow: '0 8px 16px rgba(0, 0, 0, 0.4)'
               }}
+              aria-hidden="true"
             >
               MS
             </div>
@@ -157,7 +204,7 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
                   gap: '4px'
                 }}
               >
-                <CheckCircle2 size={12} />
+                <CheckCircle2 size={12} aria-hidden="true" />
                 VERIFIED OWNER
               </span>
             </div>
@@ -165,12 +212,12 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
 
           {/* User Header Details */}
           <div style={{ marginBottom: '18px' }}>
-            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#f8fafc', letterSpacing: '-0.3px' }}>
+            <h2 id="profile-modal-title" style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#f8fafc', letterSpacing: '-0.3px' }}>
               {userProfile.name}
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-              <Briefcase size={13} color="#38bdf8" />
-              <span style={{ fontSize: '13px', fontWeight: '600', color: '#38bdf8' }}>
+              <Briefcase size={13} color="#38bdf8" aria-hidden="true" />
+              <span id="profile-modal-role" style={{ fontSize: '13px', fontWeight: '600', color: '#38bdf8' }}>
                 {userProfile.role}
               </span>
             </div>
@@ -192,17 +239,18 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'rgba(56, 189, 248, 0.12)', display: 'grid', placeItems: 'center' }}>
-                  <Phone size={15} color="#38bdf8" />
+                  <Phone size={15} color="#38bdf8" aria-hidden="true" />
                 </div>
                 <div>
                   <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Mobile Number</div>
-                  <a href={`tel:${userProfile.phone}`} style={{ fontSize: '13px', color: '#f1f5f9', fontWeight: '700', textDecoration: 'none' }}>
+                  <a href={`tel:${userProfile.phone}`} aria-label={`Phone number: +91 ${userProfile.phone}`} style={{ fontSize: '13px', color: '#f1f5f9', fontWeight: '700', textDecoration: 'none' }}>
                     +91 {userProfile.phone}
                   </a>
                 </div>
               </div>
               <button
                 onClick={() => copyToClipboard(userProfile.phone, 'Mobile Number')}
+                aria-label="Copy phone number"
                 title="Copy phone number"
                 style={{
                   background: 'transparent',
@@ -213,7 +261,7 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
                   color: '#94a3b8'
                 }}
               >
-                <Copy size={13} />
+                <Copy size={13} aria-hidden="true" />
               </button>
             </div>
 
@@ -231,12 +279,13 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                 <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'rgba(129, 140, 248, 0.12)', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-                  <Mail size={15} color="#818cf8" />
+                  <Mail size={15} color="#818cf8" aria-hidden="true" />
                 </div>
                 <div style={{ minWidth: 0, overflow: 'hidden' }}>
                   <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Email Address</div>
                   <a 
                     href={`mailto:${userProfile.email}`} 
+                    aria-label={`Email address: ${userProfile.email}`}
                     style={{ 
                       fontSize: '12.5px', 
                       color: '#f1f5f9', 
@@ -254,51 +303,8 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
               </div>
               <button
                 onClick={() => copyToClipboard(userProfile.email, 'Email Address')}
+                aria-label="Copy email address"
                 title="Copy email address"
-                style={{
-                  background: 'transparent',
-                  border: '1px solid #334155',
-                  borderRadius: '5px',
-                  padding: '5px 7px',
-                  cursor: 'pointer',
-                  color: '#94a3b8',
-                  flexShrink: 0,
-                  marginLeft: '8px'
-                }}
-              >
-                <Copy size={13} />
-              </button>
-            </div>
-
-            {/* Physical Native Address */}
-            <div 
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                padding: '10px 14px',
-                background: '#0a0f1d',
-                border: '1px solid #1e293b',
-                borderRadius: '8px'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'rgba(52, 211, 153, 0.12)', display: 'grid', placeItems: 'center', flexShrink: 0, marginTop: '2px' }}>
-                  <MapPin size={15} color="#34d399" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Native Address</div>
-                  <div style={{ fontSize: '12.5px', color: '#f1f5f9', fontWeight: '600', lineHeight: 1.35 }}>
-                    {userProfile.address}
-                  </div>
-                  <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px' }}>
-                    East Godavari District, Andhra Pradesh
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => copyToClipboard(userProfile.address, 'Address')}
-                title="Copy native address"
                 style={{
                   background: 'transparent',
                   border: '1px solid #334155',
@@ -309,70 +315,64 @@ export function UserProfileModal({ isOpen, onClose, userProfile, addToast }) {
                   flexShrink: 0
                 }}
               >
-                <Copy size={13} />
+                <Copy size={13} aria-hidden="true" />
               </button>
             </div>
-          </div>
 
-          {/* Facility Permissions Bar */}
-          <div 
-            style={{
-              padding: '10px 12px',
-              background: 'rgba(30, 41, 59, 0.45)',
-              borderRadius: '8px',
-              border: '1px solid #1e293b',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              fontSize: '11px',
-              color: '#cbd5e1'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Building2 size={14} color="#38bdf8" />
-              <span>Full Access: <b>Kakinada &amp; Vijayawada Hubs</b></span>
+            {/* Hub Locations */}
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '10px 14px',
+                background: '#0a0f1d',
+                border: '1px solid #1e293b',
+                borderRadius: '8px'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.12)', display: 'grid', placeItems: 'center' }}>
+                  <Building2 size={15} color="#34d399" aria-hidden="true" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Facilities Managed</div>
+                  <div style={{ fontSize: '12.5px', color: '#f1f5f9', fontWeight: '700' }}>
+                    Kakinada Port Hub &bull; Vijayawada Auto Nagar Hub
+                  </div>
+                </div>
+              </div>
             </div>
-            <span style={{ color: '#34d399', fontWeight: 'bold' }}>ID #OWN-01</span>
           </div>
 
-          {/* Actions Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '14px' }}>
+          {/* Logout Action */}
+          {logoutUser && (
             <button
               onClick={() => {
                 onClose();
-                if (logoutUser) logoutUser();
+                logoutUser();
               }}
               style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
                 padding: '10px',
+                background: 'rgba(239, 68, 68, 0.12)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
                 borderRadius: '8px',
-                background: 'rgba(239, 68, 68, 0.15)',
-                border: '1px solid rgba(239, 68, 68, 0.35)',
                 color: '#f87171',
                 fontWeight: '700',
-                fontSize: '12.5px',
+                fontSize: '12px',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.15s ease'
               }}
+              aria-label="Lock console and sign out"
             >
-              Lock / Sign Out
+              <LogOut size={14} aria-hidden="true" />
+              <span>LOCK TERMINAL &bull; SIGN OUT</span>
             </button>
-            <button
-              onClick={onClose}
-              style={{
-                padding: '10px',
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)',
-                border: 'none',
-                color: '#ffffff',
-                fontWeight: '700',
-                fontSize: '12.5px',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)'
-              }}
-            >
-              Close Profile
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

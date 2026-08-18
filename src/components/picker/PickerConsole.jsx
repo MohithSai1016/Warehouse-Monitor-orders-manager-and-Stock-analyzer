@@ -2,20 +2,15 @@ import React, { useState } from 'react';
 import { useWms } from '../../context/WmsContext';
 import { SKU_MAP } from '../../data/catalog';
 import { 
-  Barcode, 
   CheckCircle2, 
   MapPin, 
-  Navigation, 
   Box, 
   AlertTriangle, 
   PackageCheck, 
   ArrowRight, 
   Smartphone, 
-  Sparkles,
-  Layers,
-  Camera,
-  ShieldCheck,
-  Send
+  Camera, 
+  ShieldCheck 
 } from 'lucide-react';
 
 export function PickerConsole() {
@@ -28,17 +23,15 @@ export function PickerConsole() {
     dispatchOrder, 
     setViewMode,
     setRole,
-    addToast,
     orders 
   } = useWms();
 
   const [isScanning, setIsScanning] = useState(false);
-  const [qcInspected, setQcInspected] = useState(false);
 
   if (!activeWave || !activeWave.route || activeWave.route.instructions.length === 0) {
     return (
-      <div className="panel" style={{ padding: '50px 20px', textAlign: 'center' }}>
-        <Smartphone size={44} style={{ color: '#6877a0', margin: '0 auto 14px' }} />
+      <div className="panel" style={{ padding: '50px 20px', textAlign: 'center' }} role="status" aria-label="No Active Wave">
+        <Smartphone size={44} style={{ color: '#6877a0', margin: '0 auto 14px' }} aria-hidden="true" />
         <h2>No Active Wave Pick Selected</h2>
         <p style={{ color: '#8894ab', maxWidth: '420px', margin: '8px auto 20px', fontSize: '12px' }}>
           Select an allocated order from the Orders Matrix or launch a demo wave to begin step-by-step guided warehouse picking.
@@ -47,6 +40,7 @@ export function PickerConsole() {
           className="rush" 
           style={{ margin: '0 auto' }}
           onClick={() => { setViewMode('ORDERS'); setRole('MANAGER'); }}
+          aria-label="View allocated orders to start picking"
         >
           View Allocated Orders
         </button>
@@ -84,7 +78,7 @@ export function PickerConsole() {
     setTimeout(() => {
       setIsScanning(false);
       confirmPickerStep(currentStepIdx);
-    }, 500);
+    }, 450);
   };
 
   const handleReportDamageAtShelf = () => {
@@ -94,7 +88,7 @@ export function PickerConsole() {
   };
 
   return (
-    <div className="picker-wrap">
+    <section className="picker-wrap" aria-label="Floor Picker Handheld Terminal">
       {/* Return to 2D Map Header Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
         <button
@@ -102,6 +96,7 @@ export function PickerConsole() {
             setRole('MANAGER');
             setViewMode('MAP');
           }}
+          aria-label="Exit handheld terminal and return to 2D Warehouse Map"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -117,7 +112,7 @@ export function PickerConsole() {
             transition: 'all 0.2s ease'
           }}
         >
-          <MapPin size={14} color="#38bdf8" />
+          <MapPin size={14} color="#38bdf8" aria-hidden="true" />
           <span>&larr; Exit to 2D Warehouse Map</span>
         </button>
 
@@ -127,28 +122,30 @@ export function PickerConsole() {
       </div>
 
       {/* Main Handheld Card */}
-      <div className="picker-card">
+      <div className="picker-card" role="region" aria-label="Pick Wave Navigation Guide">
         {/* Left Side: Route Minimap */}
-        <div className="picker-map">
+        <div className="picker-map" aria-label="TSP Pick Route Progress">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ font: "700 10px 'DM Mono'", color: '#8897c2' }}>
+            <span style={{ font: "700 10px 'DM Mono', monospace", color: '#8897c2' }}>
               TSP ROUTE #{activeWave.id}
             </span>
-            <span style={{ font: "700 10px 'DM Mono'", color: '#32d49b' }}>
+            <span style={{ font: "700 10px 'DM Mono', monospace", color: '#32d49b' }}>
               {activeWave.route.totalDistanceMeters}m Total
             </span>
           </div>
 
           {/* Route path graphic */}
-          <div className="route-line"></div>
-          <div className="route-dots">
+          <div className="route-line" aria-hidden="true"></div>
+          <div className="route-dots" role="list" aria-label="Route waypoints">
             {instructions.map((step, idx) => {
               const isDone = idx < currentStepIdx || (idx === currentStepIdx && isScanned);
               const isCurrent = idx === currentStepIdx && !isDone;
               return (
                 <i
                   key={idx}
+                  role="listitem"
                   className={`${isDone ? 'done' : ''} ${isCurrent ? 'current' : ''}`}
+                  aria-label={`Step ${step.step}: ${step.title}. ${isDone ? 'Completed' : isCurrent ? 'Current' : 'Pending'}`}
                   title={`${step.step}. ${step.title}`}
                 >
                   {step.step}
@@ -168,7 +165,7 @@ export function PickerConsole() {
         <div className="picker-body">
           {isFinished ? (
             /* Finished Wave View & QC / Dispatch Pipeline */
-            <div style={{ textAlign: 'center', padding: '10px 0' }}>
+            <div style={{ textAlign: 'center', padding: '10px 0' }} role="status" aria-label="Wave Completed">
               <div style={{ 
                 width: '56px', 
                 height: '56px', 
@@ -176,10 +173,10 @@ export function PickerConsole() {
                 color: '#32d49b', 
                 borderRadius: '50%', 
                 display: 'grid', 
-                placeItems: 'center',
+                placeItems: 'center', 
                 margin: '0 auto 12px' 
               }}>
-                <CheckCircle2 size={30} />
+                <CheckCircle2 size={30} aria-hidden="true" />
               </div>
               <span className="step-tag" style={{ color: '#32d49b', background: '#14382c' }}>
                 WAVE COMPLETED &bull; {orderStatus}
@@ -197,10 +194,10 @@ export function PickerConsole() {
                     style={{ background: '#7988ff', color: '#ffffff' }}
                     onClick={() => {
                       verifyQualityCheck(activeWave.orderId);
-                      setQcInspected(true);
                     }}
+                    aria-label={`Verify Quality Control for order ${activeWave.orderId}`}
                   >
-                    <ShieldCheck size={14} />
+                    <ShieldCheck size={14} aria-hidden="true" />
                     Execute Optical & Weight Quality Check (QC)
                   </button>
                 ) : (
@@ -212,7 +209,7 @@ export function PickerConsole() {
                     fontSize: '11px',
                     color: '#7ef2c7',
                     fontWeight: 'bold'
-                  }}>
+                  }} role="status">
                     ✓ Quality Check Passed & Sealed
                   </div>
                 )}
@@ -225,8 +222,9 @@ export function PickerConsole() {
                     setViewMode('ORDERS');
                     setRole('MANAGER');
                   }}
+                  aria-label={`Print manifest and dispatch order ${activeWave.orderId}`}
                 >
-                  <PackageCheck size={14} />
+                  <PackageCheck size={14} aria-hidden="true" />
                   Print Courier Manifest & Final Dispatch
                 </button>
 
@@ -236,6 +234,7 @@ export function PickerConsole() {
                     setViewMode('MAP');
                     setRole('MANAGER');
                   }}
+                  aria-label="Return to Warehouse Command Map"
                 >
                   Return to Warehouse Command Map
                 </button>
@@ -243,7 +242,7 @@ export function PickerConsole() {
             </div>
           ) : (
             /* Active Step View */
-            <div>
+            <div role="region" aria-label={`Current Pick Step ${currentStep.step}`}>
               <span className="step-tag">
                 STEP {currentStep.step} OF {instructions.length} &bull; {currentStep.type}
               </span>
@@ -254,7 +253,7 @@ export function PickerConsole() {
               {/* Task Info Box */}
               {currentStep.binId !== 'DEPOT' && (
                 <div className="pick-task">
-                  <Box size={24} />
+                  <Box size={24} aria-hidden="true" />
                   <div style={{ flex: 1 }}>
                     <small>TARGET BIN & BARCODE</small>
                     <b>{currentStep.binId} &bull; EAN: {currentSkuInfo?.barcode || '89012400101'}</b>
@@ -271,8 +270,9 @@ export function PickerConsole() {
                 className={`scan-btn ${isScanning ? 'scanned' : ''}`}
                 onClick={handleSimulateScan}
                 disabled={isScanning}
+                aria-label={`Scan barcode for SKU in bin ${currentStep.binId}`}
               >
-                <Camera size={14} />
+                <Camera size={14} aria-hidden="true" />
                 <span>{isScanning ? 'Verifying Optical Barcode...' : 'Scan Bin / SKU Barcode'}</span>
               </button>
 
@@ -280,9 +280,10 @@ export function PickerConsole() {
                 <button
                   className="next-btn"
                   onClick={() => confirmPickerStep(currentStepIdx)}
+                  aria-label={`Confirm pick for step ${currentStep.step}`}
                 >
                   <span>Confirm Step</span>
-                  <ArrowRight size={13} />
+                  <ArrowRight size={13} aria-hidden="true" />
                 </button>
 
                 {currentStep.binId !== 'DEPOT' && (
@@ -290,9 +291,10 @@ export function PickerConsole() {
                     className="outline-btn danger"
                     style={{ width: 'auto', padding: '0 12px' }}
                     onClick={handleReportDamageAtShelf}
+                    aria-label={`Report damaged unit at bin ${currentStep.binId} and trigger automatic rerouting`}
                     title="Report defective item -> Autonomous Decision Engine will reroute to nearest alternative bin"
                   >
-                    <AlertTriangle size={13} />
+                    <AlertTriangle size={13} aria-hidden="true" />
                     <span style={{ fontSize: '10px', marginLeft: '4px' }}>Damaged (Auto-Reroute)</span>
                   </button>
                 )}
@@ -303,22 +305,22 @@ export function PickerConsole() {
       </div>
 
       {/* Operator Info Card */}
-      <div className="worker-info">
-        <div className="worker-avatar">
-          {activePicker.name.split(' ').map(n => n[0]).join('')}
+      <div className="worker-info" role="region" aria-label="Picker Shift Summary">
+        <div className="worker-avatar" aria-hidden="true">
+          {activePicker?.name?.split(' ').map(n => n[0]).join('') || 'MS'}
         </div>
-        <h3>{activePicker.name}</h3>
-        <p>Assigned to {activePicker.zone} &bull; ID #{activePicker.id}</p>
+        <h3>{activePicker?.name || 'Mohith Sai'}</h3>
+        <p>Assigned to {activePicker?.zone} &bull; ID #{activePicker?.id}</p>
 
         <hr />
 
         <div>
           <span>Shift Accuracy</span>
-          <b style={{ color: '#32d49b' }}>{activePicker.accuracy}</b>
+          <b style={{ color: '#32d49b' }}>{activePicker?.accuracy}</b>
         </div>
         <div>
           <span>Picks Completed</span>
-          <b>{activePicker.shiftPicks} Items</b>
+          <b>{activePicker?.shiftPicks} Items</b>
         </div>
         <div>
           <span>Active Wave</span>
@@ -329,6 +331,6 @@ export function PickerConsole() {
           <b style={{ color: activeWave.priority?.color || '#fff' }}>{activeWave.priority?.label || 'Standard'}</b>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

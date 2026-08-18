@@ -8,21 +8,32 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="toasts">
+    <div className="toasts" role="region" aria-label="System Notifications">
       {toasts.map(toast => {
-        let icon = <CheckCircle2 size={16} />;
-        if (toast.type === 'warning') icon = <AlertTriangle size={16} />;
-        else if (toast.type === 'danger') icon = <ShieldAlert size={16} />;
+        let icon = <CheckCircle2 size={16} aria-hidden="true" />;
+        if (toast.type === 'warning') icon = <AlertTriangle size={16} aria-hidden="true" />;
+        else if (toast.type === 'danger') icon = <ShieldAlert size={16} aria-hidden="true" />;
+        else if (toast.type === 'info') icon = <Zap size={16} aria-hidden="true" />;
 
         return (
-          <div key={toast.id} className={`toast ${toast.type || 'success'}`}>
+          <div 
+            key={toast.id} 
+            className={`toast ${toast.type || 'success'}`}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {icon}
             <div>
               <strong>{toast.title}</strong>
               <small>{toast.message}</small>
             </div>
-            <button onClick={() => removeToast(toast.id)}>
-              <X size={14} />
+            <button 
+              onClick={() => removeToast(toast.id)}
+              aria-label={`Dismiss notification: ${toast.title}`}
+              title="Dismiss notification"
+            >
+              <X size={14} aria-hidden="true" />
             </button>
           </div>
         );
