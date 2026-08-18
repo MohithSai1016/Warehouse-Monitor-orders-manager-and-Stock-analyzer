@@ -1,12 +1,11 @@
 import React from 'react';
 import { useWms } from '../../context/WmsContext';
-import { Zap, AlertTriangle, CheckCircle2, Navigation, TrendingUp, ShieldAlert, PackageCheck } from 'lucide-react';
+import { Zap, CheckCircle2, ShieldAlert, PackageCheck } from 'lucide-react';
 
 export function MetricsGrid() {
-  const { metrics, exceptions, orders, bins, activeLocation } = useWms();
+  const { metrics, bins, activeLocation } = useWms();
 
   const totalReserved = Object.values(bins).reduce((sum, b) => sum + (b.reserved || 0), 0);
-  const totalStock = Object.values(bins).reduce((sum, b) => sum + b.quantity, 0);
 
   return (
     <div className="metrics">
@@ -48,13 +47,13 @@ export function MetricsGrid() {
 
       {/* Metric 4: Decision Engine Preemptions & Distance Saved */}
       <div className="metric">
-        <div className="metric-icon" style={{ background: '#2f2452', color: '#c5adff' }}>
+        <div className="metric-icon" style={{ background: '#FFF8F0', color: '#E99A45' }}>
           <Zap size={18} />
         </div>
         <div>
           <small>VIP PREEMPTIONS & TSP</small>
           <strong>{metrics.preemptionsCount} Preempts</strong>
-          <span style={{ color: '#8290ff' }}>{metrics.distanceSavedMeters}m walk distance saved</span>
+          <span style={{ color: '#E99A45', fontWeight: '600' }}>{metrics.distanceSavedMeters}m walk distance saved</span>
         </div>
       </div>
     </div>

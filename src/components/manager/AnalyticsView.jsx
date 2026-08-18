@@ -23,7 +23,7 @@ const THROUGHPUT_DATA = [
   { time: '20:00', picks: 140, dispatched: 135 }
 ];
 
-const PIE_COLORS = ['#c5adff', '#ffc16b', '#7988ff', '#36c999'];
+const PIE_COLORS = ['#6366F1', '#E99A45', '#52627A', '#10B981'];
 
 export function AnalyticsView() {
   const { orders, bins, metrics, exceptions, activeLocation } = useWms();
@@ -52,7 +52,9 @@ export function AnalyticsView() {
               <span>Live Picks vs Dispatches &bull; {activeLocation.district}</span>
             </h2>
           </div>
-          <span className="trend-up">+14.2% Peak Velocity</span>
+          <span className="trend-up" style={{ color: '#10B981', background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '700' }}>
+            +14.2% Peak Velocity
+          </span>
         </div>
 
         <div style={{ height: '230px', padding: '0 10px 10px' }}>
@@ -60,21 +62,28 @@ export function AnalyticsView() {
             <AreaChart data={THROUGHPUT_DATA}>
               <defs>
                 <linearGradient id="picksGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#7887ff" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#7887ff" stopOpacity={0.0}/>
+                  <stop offset="5%" stopColor="#17213A" stopOpacity={0.25}/>
+                  <stop offset="95%" stopColor="#17213A" stopOpacity={0.0}/>
                 </linearGradient>
                 <linearGradient id="dispGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#36c999" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#36c999" stopOpacity={0.0}/>
+                  <stop offset="5%" stopColor="#E99A45" stopOpacity={0.35}/>
+                  <stop offset="95%" stopColor="#E99A45" stopOpacity={0.0}/>
                 </linearGradient>
               </defs>
-              <XAxis dataKey="time" stroke="#54607a" tick={{ fontSize: 10 }} />
-              <YAxis stroke="#54607a" tick={{ fontSize: 10 }} />
+              <XAxis dataKey="time" stroke="#8A96A8" tick={{ fontSize: 10, fill: '#52627A' }} />
+              <YAxis stroke="#8A96A8" tick={{ fontSize: 10, fill: '#52627A' }} />
               <Tooltip 
-                contentStyle={{ background: '#131929', borderColor: '#2b3652', borderRadius: '8px', fontSize: '11px' }} 
+                contentStyle={{ 
+                  background: '#FFFFFF', 
+                  borderColor: '#E1E6ED', 
+                  borderRadius: '10px', 
+                  boxShadow: '0 4px 14px rgba(23, 33, 58, 0.08)', 
+                  fontSize: '11.5px',
+                  color: '#17213A'
+                }} 
               />
-              <Area type="monotone" dataKey="picks" stroke="#7887ff" fillOpacity={1} fill="url(#picksGrad)" strokeWidth={2} name="Units Picked" />
-              <Area type="monotone" dataKey="dispatched" stroke="#36c999" fillOpacity={1} fill="url(#dispGrad)" strokeWidth={2} name="Orders Dispatched" />
+              <Area type="monotone" dataKey="picks" stroke="#17213A" fillOpacity={1} fill="url(#picksGrad)" strokeWidth={2} name="Units Picked" />
+              <Area type="monotone" dataKey="dispatched" stroke="#E99A45" fillOpacity={1} fill="url(#dispGrad)" strokeWidth={2} name="Orders Dispatched" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -89,7 +98,7 @@ export function AnalyticsView() {
               <span>SLA Allocation Weights</span>
             </h2>
           </div>
-          <span style={{ fontFamily: 'DM Mono', fontSize: '10px', color: '#c5adff' }}>VIP First Rule</span>
+          <span style={{ fontFamily: 'DM Mono', fontSize: '10px', color: '#6366F1', fontWeight: '700' }}>VIP First Rule</span>
         </div>
 
         <div style={{ height: '180px' }}>
@@ -109,60 +118,26 @@ export function AnalyticsView() {
                 ))}
               </Pie>
               <Tooltip 
-                contentStyle={{ background: '#131929', borderColor: '#2b3652', borderRadius: '8px', fontSize: '11px' }} 
+                contentStyle={{ 
+                  background: '#FFFFFF', 
+                  borderColor: '#E1E6ED', 
+                  borderRadius: '10px', 
+                  boxShadow: '0 4px 14px rgba(23, 33, 58, 0.08)', 
+                  fontSize: '11.5px',
+                  color: '#17213A'
+                }} 
               />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="pie-legend">
-          <span><i style={{ background: '#c5adff' }}></i> VIP: <b>{vipCount}</b></span>
-          <span><i style={{ background: '#ffc16b' }}></i> Express: <b>{expressCount}</b></span>
-          <span><i style={{ background: '#7988ff' }}></i> Standard: <b>{standardCount}</b></span>
-          <span><i style={{ background: '#36c999' }}></i> Bulk: <b>{bulkCount}</b></span>
-        </div>
-      </div>
-
-      {/* Section 3: Zone Utilization & Safety Buffer Status */}
-      <div className="panel bars">
-        <div className="panel-head">
-          <div>
-            <h2>
-              Physical Storage Capacity by Zone
-              <span>Current vs Maximum Capacity</span>
-            </h2>
-          </div>
-        </div>
-
-        <div className="bar-row">
-          <span>Zone A (Fast)</span>
-          <div><i style={{ width: '78%' }}></i></div>
-          <b>78%</b>
-        </div>
-
-        <div className="bar-row">
-          <span>Zone B (Optics)</span>
-          <div><i style={{ width: '62%' }}></i></div>
-          <b>62%</b>
-        </div>
-
-        <div className="bar-row">
-          <span>Zone C (Heavy)</span>
-          <div><i style={{ width: '85%', background: '#e9af47' }}></i></div>
-          <b>85%</b>
-        </div>
-
-        <div className="bar-row">
-          <span>Zone D (Cold)</span>
-          <div><i style={{ width: '44%', background: '#6ee6e6' }}></i></div>
-          <b>44%</b>
-        </div>
-
-        <div className="alert">
-          <Zap size={16} />
-          <div>
-            <b>Decision Engine Optimization Active:</b> System has autonomously resolved {metrics.preemptionsCount} stock allocation conflicts and shaved {metrics.distanceSavedMeters} meters off picker routes using 2-Opt TSP path planning.
-          </div>
+        <div className="pie-legend" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginTop: '10px' }}>
+          {pieData.map((item, idx) => (
+            <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#52627A' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: PIE_COLORS[idx] }}></span>
+              <span>{item.name}: <strong>{item.value}</strong></span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

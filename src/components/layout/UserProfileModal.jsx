@@ -3,13 +3,11 @@ import {
   X, 
   Phone, 
   Mail, 
-  MapPin, 
   Briefcase, 
   CheckCircle2, 
   Copy, 
   Sparkles,
   Building2,
-  Lock,
   LogOut
 } from 'lucide-react';
 
@@ -79,8 +77,8 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(3, 7, 18, 0.78)',
-        backdropFilter: 'blur(8px)',
+        backgroundColor: 'rgba(23, 33, 58, 0.45)',
+        backdropFilter: 'blur(6px)',
         zIndex: 9999,
         display: 'grid',
         placeItems: 'center',
@@ -98,10 +96,10 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
         style={{
           width: '100%',
           maxWidth: '460px',
-          background: 'linear-gradient(180deg, #111827 0%, #0b0f19 100%)',
-          border: '1px solid rgba(56, 189, 248, 0.35)',
-          borderRadius: '16px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.15)',
+          background: '#FFFFFF',
+          border: '1px solid #E1E6ED',
+          borderRadius: '18px',
+          boxShadow: '0 25px 50px -12px rgba(23, 33, 58, 0.18)',
           overflow: 'hidden',
           position: 'relative'
         }}
@@ -109,8 +107,8 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
         {/* Top Banner Gradient */}
         <div 
           style={{
-            height: '90px',
-            background: 'linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%)',
+            height: '84px',
+            background: 'linear-gradient(135deg, #17213A 0%, #263653 100%)',
             position: 'relative',
             padding: '14px 18px',
             display: 'flex',
@@ -124,17 +122,17 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
                 fontSize: '10px',
                 fontWeight: 'bold',
                 letterSpacing: '0.5px',
-                padding: '3px 8px',
+                padding: '4px 10px',
                 borderRadius: '20px',
-                background: 'rgba(0, 0, 0, 0.4)',
-                color: '#e0f2fe',
+                background: 'rgba(255, 255, 255, 0.15)',
+                color: '#FFFFFF',
                 backdropFilter: 'blur(4px)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px'
               }}
             >
-              <Sparkles size={11} color="#38bdf8" aria-hidden="true" />
+              <Sparkles size={11} color="#E99A45" aria-hidden="true" />
               SYSTEM OWNER &amp; ARCHITECT
             </span>
           </div>
@@ -143,7 +141,7 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
             onClick={onClose}
             aria-label="Close profile modal"
             style={{
-              background: 'rgba(0, 0, 0, 0.4)',
+              background: 'rgba(255, 255, 255, 0.15)',
               border: 'none',
               borderRadius: '50%',
               width: '28px',
@@ -151,7 +149,7 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
               display: 'grid',
               placeItems: 'center',
               cursor: 'pointer',
-              color: '#ffffff',
+              color: '#FFFFFF',
               transition: 'background 0.15s'
             }}
           >
@@ -160,29 +158,29 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
         </div>
 
         {/* User Avatar Badge (Overlapping Banner) */}
-        <div style={{ padding: '0 20px 20px', position: 'relative' }}>
+        <div style={{ padding: '0 24px 24px', position: 'relative' }}>
           <div 
             style={{
               display: 'flex',
               alignItems: 'flex-end',
               justifyContent: 'space-between',
-              marginTop: '-42px',
+              marginTop: '-38px',
               marginBottom: '14px'
             }}
           >
             <div 
               style={{
-                width: '74px',
-                height: '74px',
+                width: '72px',
+                height: '72px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)',
-                border: '4px solid #111827',
+                background: 'linear-gradient(135deg, #E99A45 0%, #D98835 100%)',
+                border: '4px solid #FFFFFF',
                 display: 'grid',
                 placeItems: 'center',
-                fontSize: '24px',
+                fontSize: '22px',
                 fontWeight: '800',
                 color: '#ffffff',
-                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.4)'
+                boxShadow: '0 6px 16px rgba(23, 33, 58, 0.15)'
               }}
               aria-hidden="true"
             >
@@ -196,9 +194,9 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
                   fontWeight: '700',
                   padding: '4px 10px',
                   borderRadius: '6px',
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  border: '1px solid rgba(16, 185, 129, 0.4)',
-                  color: '#34d399',
+                  background: '#ECFDF5',
+                  border: '1px solid #A7F3D0',
+                  color: '#065F46',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px'
@@ -212,12 +210,12 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
 
           {/* User Header Details */}
           <div style={{ marginBottom: '18px' }}>
-            <h2 id="profile-modal-title" style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#f8fafc', letterSpacing: '-0.3px' }}>
+            <h2 id="profile-modal-title" style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#17213A', letterSpacing: '-0.3px' }}>
               {userProfile.name}
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-              <Briefcase size={13} color="#38bdf8" aria-hidden="true" />
-              <span id="profile-modal-role" style={{ fontSize: '13px', fontWeight: '600', color: '#38bdf8' }}>
+              <Briefcase size={13} color="#E99A45" aria-hidden="true" />
+              <span id="profile-modal-role" style={{ fontSize: '13px', fontWeight: '600', color: '#E99A45' }}>
                 {userProfile.role}
               </span>
             </div>
@@ -232,18 +230,18 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '10px 14px',
-                background: '#0a0f1d',
-                border: '1px solid #1e293b',
+                background: '#F8FAFC',
+                border: '1px solid #E1E6ED',
                 borderRadius: '8px'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'rgba(56, 189, 248, 0.12)', display: 'grid', placeItems: 'center' }}>
-                  <Phone size={15} color="#38bdf8" aria-hidden="true" />
+                <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: '#FFF8F0', display: 'grid', placeItems: 'center' }}>
+                  <Phone size={15} color="#E99A45" aria-hidden="true" />
                 </div>
                 <div>
-                  <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Mobile Number</div>
-                  <a href={`tel:${userProfile.phone}`} aria-label={`Phone number: +91 ${userProfile.phone}`} style={{ fontSize: '13px', color: '#f1f5f9', fontWeight: '700', textDecoration: 'none' }}>
+                  <div style={{ fontSize: '10px', color: '#52627A', fontWeight: '600', textTransform: 'uppercase' }}>Mobile Number</div>
+                  <a href={`tel:${userProfile.phone}`} aria-label={`Phone number: +91 ${userProfile.phone}`} style={{ fontSize: '13px', color: '#17213A', fontWeight: '700', textDecoration: 'none' }}>
                     +91 {userProfile.phone}
                   </a>
                 </div>
@@ -253,12 +251,12 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
                 aria-label="Copy phone number"
                 title="Copy phone number"
                 style={{
-                  background: 'transparent',
-                  border: '1px solid #334155',
+                  background: '#FFFFFF',
+                  border: '1px solid #E1E6ED',
                   borderRadius: '5px',
                   padding: '5px 7px',
                   cursor: 'pointer',
-                  color: '#94a3b8'
+                  color: '#52627A'
                 }}
               >
                 <Copy size={13} aria-hidden="true" />
@@ -272,23 +270,23 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '10px 14px',
-                background: '#0a0f1d',
-                border: '1px solid #1e293b',
+                background: '#F8FAFC',
+                border: '1px solid #E1E6ED',
                 borderRadius: '8px'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'rgba(129, 140, 248, 0.12)', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-                  <Mail size={15} color="#818cf8" aria-hidden="true" />
+                <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: '#EEF2FF', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+                  <Mail size={15} color="#6366F1" aria-hidden="true" />
                 </div>
                 <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                  <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Email Address</div>
+                  <div style={{ fontSize: '10px', color: '#52627A', fontWeight: '600', textTransform: 'uppercase' }}>Email Address</div>
                   <a 
                     href={`mailto:${userProfile.email}`} 
                     aria-label={`Email address: ${userProfile.email}`}
                     style={{ 
                       fontSize: '12.5px', 
-                      color: '#f1f5f9', 
+                      color: '#17213A', 
                       fontWeight: '700', 
                       textDecoration: 'none',
                       whiteSpace: 'nowrap',
@@ -306,12 +304,12 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
                 aria-label="Copy email address"
                 title="Copy email address"
                 style={{
-                  background: 'transparent',
-                  border: '1px solid #334155',
+                  background: '#FFFFFF',
+                  border: '1px solid #E1E6ED',
                   borderRadius: '5px',
                   padding: '5px 7px',
                   cursor: 'pointer',
-                  color: '#94a3b8',
+                  color: '#52627A',
                   flexShrink: 0
                 }}
               >
@@ -325,18 +323,18 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
                 display: 'flex',
                 alignItems: 'center',
                 padding: '10px 14px',
-                background: '#0a0f1d',
-                border: '1px solid #1e293b',
+                background: '#F8FAFC',
+                border: '1px solid #E1E6ED',
                 borderRadius: '8px'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.12)', display: 'grid', placeItems: 'center' }}>
-                  <Building2 size={15} color="#34d399" aria-hidden="true" />
+                <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: '#ECFDF5', display: 'grid', placeItems: 'center' }}>
+                  <Building2 size={15} color="#10B981" aria-hidden="true" />
                 </div>
                 <div>
-                  <div style={{ fontSize: '10px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Facilities Managed</div>
-                  <div style={{ fontSize: '12.5px', color: '#f1f5f9', fontWeight: '700' }}>
+                  <div style={{ fontSize: '10px', color: '#52627A', fontWeight: '600', textTransform: 'uppercase' }}>Facilities Managed</div>
+                  <div style={{ fontSize: '12.5px', color: '#17213A', fontWeight: '700' }}>
                     Kakinada Port Hub &bull; Vijayawada Auto Nagar Hub
                   </div>
                 </div>
@@ -357,11 +355,11 @@ export function UserProfileModal({ isOpen, onClose, userProfile, logoutUser, add
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                padding: '10px',
-                background: 'rgba(239, 68, 68, 0.12)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
+                padding: '11px',
+                background: '#FEF2F2',
+                border: '1px solid #FECACA',
                 borderRadius: '8px',
-                color: '#f87171',
+                color: '#DC2626',
                 fontWeight: '700',
                 fontSize: '12px',
                 cursor: 'pointer',

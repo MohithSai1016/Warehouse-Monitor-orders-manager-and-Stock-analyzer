@@ -15,7 +15,7 @@ export function AgvMetricsFooter({ metrics }) {
   return (
     <div className="agv-metrics-bar">
       <div className="agv-metric-card">
-        <div className="agv-metric-icon" style={{ background: '#1e3a8a', color: '#60a5fa' }}>
+        <div className="agv-metric-icon" style={{ background: '#EFF6FF', color: '#2563EB' }}>
           <Package size={16} />
         </div>
         <div>
@@ -26,18 +26,18 @@ export function AgvMetricsFooter({ metrics }) {
       </div>
 
       <div className="agv-metric-card">
-        <div className="agv-metric-icon" style={{ background: '#14382c', color: '#34d399' }}>
+        <div className="agv-metric-icon" style={{ background: '#ECFDF5', color: '#059669' }}>
           <CheckCircle2 size={16} />
         </div>
         <div>
           <small>ITEMS DELIVERED</small>
           <strong>{metrics.itemsDelivered}</strong>
-          <span style={{ color: '#34d399' }}>+100% On-Time SLA</span>
+          <span style={{ color: '#059669' }}>+100% On-Time SLA</span>
         </div>
       </div>
 
       <div className="agv-metric-card">
-        <div className="agv-metric-icon" style={{ background: '#2e1065', color: '#c084fc' }}>
+        <div className="agv-metric-icon" style={{ background: '#F5F3FF', color: '#7C3AED' }}>
           <Bot size={16} />
         </div>
         <div>
@@ -48,7 +48,7 @@ export function AgvMetricsFooter({ metrics }) {
       </div>
 
       <div className="agv-metric-card">
-        <div className="agv-metric-icon" style={{ background: '#422006', color: '#fbbf24' }}>
+        <div className="agv-metric-icon" style={{ background: '#FFFBEB', color: '#D97706' }}>
           <Clock size={16} />
         </div>
         <div>
@@ -59,7 +59,7 @@ export function AgvMetricsFooter({ metrics }) {
       </div>
 
       <div className="agv-metric-card">
-        <div className="agv-metric-icon" style={{ background: '#172554', color: '#38bdf8' }}>
+        <div className="agv-metric-icon" style={{ background: '#F0F9FF', color: '#0284C7' }}>
           <Navigation size={16} />
         </div>
         <div>
@@ -70,7 +70,7 @@ export function AgvMetricsFooter({ metrics }) {
       </div>
 
       <div className="agv-metric-card">
-        <div className="agv-metric-icon" style={{ background: '#3b0764', color: '#e879f9' }}>
+        <div className="agv-metric-icon" style={{ background: '#FDF2F8', color: '#DB2777' }}>
           <ShieldCheck size={16} />
         </div>
         <div>

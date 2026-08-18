@@ -8,7 +8,8 @@ import {
   LayoutDashboard, 
   CheckCircle2,
   Flame,
-  MapPin
+  MapPin,
+  Bot
 } from 'lucide-react';
 
 export function Header() {
@@ -36,11 +37,11 @@ export function Header() {
     <header role="banner" aria-label="Warehouse Command Header">
       <div>
         <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>SAI'S WAREHOUSE</span>
+          <span style={{ color: '#E99A45', fontWeight: 'bold' }}>SAI'S WAREHOUSE</span>
           <span aria-hidden="true">&bull;</span>
-          <span style={{ color: '#a78bfa' }}>{activeLocation.name.toUpperCase()}</span>
+          <span style={{ color: '#17213A', fontWeight: '600' }}>{activeLocation.name.toUpperCase()}</span>
           <span aria-hidden="true">&bull;</span>
-          <span>{activeLocation.address}</span>
+          <span style={{ color: '#52627A' }}>{activeLocation.address}</span>
         </div>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {role === 'PICKER' || viewMode === 'PICKER' 
@@ -54,7 +55,7 @@ export function Header() {
         <div 
           role="tablist" 
           aria-label="Select Warehouse Facility"
-          style={{ display: 'flex', background: '#0f172a', padding: '3px', borderRadius: '8px', border: '1px solid #1e293b' }}
+          style={{ display: 'flex', background: '#F1F5F9', padding: '3px', borderRadius: '10px', border: '1px solid #E1E6ED' }}
         >
           {warehouseLocations.map(loc => (
             <button
@@ -67,17 +68,18 @@ export function Header() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
-                padding: '5px 10px',
-                borderRadius: '6px',
+                padding: '6px 12px',
+                borderRadius: '8px',
                 border: 'none',
-                background: selectedWarehouseId === loc.id ? '#2563eb' : 'transparent',
-                color: selectedWarehouseId === loc.id ? '#fff' : '#94a3b8',
+                background: selectedWarehouseId === loc.id ? '#17213A' : 'transparent',
+                color: selectedWarehouseId === loc.id ? '#FFFFFF' : '#52627A',
                 fontSize: '11px',
-                fontWeight: selectedWarehouseId === loc.id ? '700' : '500',
-                cursor: 'pointer'
+                fontWeight: selectedWarehouseId === loc.id ? '700' : '600',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
               }}
             >
-              <MapPin size={11} color={selectedWarehouseId === loc.id ? '#fff' : '#64748b'} aria-hidden="true" />
+              <MapPin size={11} color={selectedWarehouseId === loc.id ? '#E99A45' : '#64748B'} aria-hidden="true" />
               {loc.city} Hub
             </button>
           ))}
@@ -102,13 +104,12 @@ export function Header() {
             className={`role-btn ${viewMode === 'AGV_SIMULATION' ? 'active' : ''}`}
             aria-pressed={viewMode === 'AGV_SIMULATION'}
             aria-label="Switch to 3D Autonomous Mobile Robot Simulation View"
-            style={viewMode === 'AGV_SIMULATION' ? { background: '#1e3a8a', color: '#60a5fa', fontWeight: 'bold' } : { color: '#38bdf8' }}
             onClick={() => {
               setRole('MANAGER');
               setViewMode('AGV_SIMULATION');
             }}
           >
-            <Activity size={13} aria-hidden="true" />
+            <Bot size={13} aria-hidden="true" />
             3D AGV Fleet
           </button>
 
@@ -130,8 +131,8 @@ export function Header() {
         <button
           className="rush"
           style={{
-            background: 'linear-gradient(135deg, #f59e0b, #ea580c)',
-            boxShadow: '0 4px 16px rgba(234, 88, 12, 0.4)',
+            background: 'linear-gradient(135deg, #E99A45, #D98835)',
+            boxShadow: '0 4px 14px rgba(233, 154, 69, 0.35)',
             color: '#ffffff',
             fontWeight: '800'
           }}
@@ -158,15 +159,15 @@ export function Header() {
         {/* Simulation Speed Control */}
         {simulationActive && (
           <div className="live" style={{ padding: '4px 8px' }} role="group" aria-label="Simulation Speed Controls">
-            <span style={{ fontSize: '9px', color: '#7e8ba3' }} id="sim-speed-label">SPEED:</span>
+            <span style={{ fontSize: '9px', color: '#52627A' }} id="sim-speed-label">SPEED:</span>
             {[1, 2, 5].map(spd => (
               <button
                 key={spd}
                 aria-label={`Set simulation speed to ${spd}x`}
                 aria-pressed={simulationSpeed === spd}
                 style={{
-                  background: simulationSpeed === spd ? '#7887ff' : 'transparent',
-                  color: simulationSpeed === spd ? '#fff' : '#8c97ad',
+                  background: simulationSpeed === spd ? '#17213A' : 'transparent',
+                  color: simulationSpeed === spd ? '#FFFFFF' : '#52627A',
                   border: 0,
                   borderRadius: '4px',
                   padding: '2px 6px',
@@ -186,6 +187,7 @@ export function Header() {
         {/* Batch Run Decision Engine */}
         <button
           className="rush"
+          style={{ background: '#17213A', color: '#FFFFFF', boxShadow: '0 4px 14px rgba(23, 33, 58, 0.2)' }}
           onClick={allocateAllPendingOrders}
           aria-label={`Run Autonomous Decision Engine. ${pendingCount} pending orders`}
           title="Run priority allocation & preemption engine across all pending orders"

@@ -293,24 +293,24 @@ export function AgvSimulationView() {
   return (
     <div className="agv-view-container" style={{ padding: '16px 20px', maxWidth: '1600px', margin: '0 auto' }}>
       {/* 1. Header Banner */}
-      <div className="agv-top-header" style={{ marginBottom: '14px' }}>
+      <div className="agv-top-header" style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#38bdf8' }}>
-            <Radio size={12} className="pulse" color="#38bdf8" />
+          <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#E99A45' }}>
+            <Radio size={12} className="pulse" color="#E99A45" />
             SAI'S WAREHOUSE &bull; {activeLocation.name.toUpperCase()} &bull; 3D DEDICATED TRACKS &bull; ZERO TRAFFIC
           </div>
-          <h1 style={{ fontSize: '20px', margin: '4px 0 0', fontWeight: '800', letterSpacing: '-0.3px' }}>
+          <h1 style={{ fontSize: '20px', margin: '4px 0 0', fontWeight: '800', letterSpacing: '-0.3px', color: '#17213A' }}>
             {activeLocation.city} Hub: 3D Autonomous Multi-Level Track Facility &ndash; Continuous Robot Flow
           </h1>
         </div>
 
         {/* 3D vs 2D View Switcher */}
-        <div style={{ display: 'flex', background: '#0f172a', padding: '3px', borderRadius: '8px', border: '1px solid #334155' }}>
+        <div style={{ display: 'flex', background: '#F1F5F9', padding: '3px', borderRadius: '8px', border: '1px solid #E1E6ED' }}>
           <button
             onClick={() => setViewMode('3D')}
             style={{
-              background: viewMode === '3D' ? '#2563eb' : 'transparent',
-              color: viewMode === '3D' ? '#ffffff' : '#94a3b8',
+              background: viewMode === '3D' ? '#17213A' : 'transparent',
+              color: viewMode === '3D' ? '#ffffff' : '#52627A',
               border: 'none',
               padding: '6px 14px',
               borderRadius: '6px',
@@ -319,17 +319,18 @@ export function AgvSimulationView() {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              transition: 'all 0.15s ease'
             }}
           >
-            <Box size={13} />
+            <Box size={13} color={viewMode === '3D' ? '#E99A45' : '#52627A'} />
             3D Multi-Level
           </button>
           <button
             onClick={() => setViewMode('2D')}
             style={{
-              background: viewMode === '2D' ? '#2563eb' : 'transparent',
-              color: viewMode === '2D' ? '#ffffff' : '#94a3b8',
+              background: viewMode === '2D' ? '#17213A' : 'transparent',
+              color: viewMode === '2D' ? '#ffffff' : '#52627A',
               border: 'none',
               padding: '6px 14px',
               borderRadius: '6px',
@@ -338,10 +339,11 @@ export function AgvSimulationView() {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              transition: 'all 0.15s ease'
             }}
           >
-            <Layers size={13} />
+            <Layers size={13} color={viewMode === '2D' ? '#E99A45' : '#52627A'} />
             2D Guideway
           </button>
         </div>
@@ -352,12 +354,13 @@ export function AgvSimulationView() {
         {/* Main 3D Canvas Card */}
         <div
           style={{
-            background: '#070b14',
-            border: '1px solid #1e293b',
-            borderRadius: '12px',
+            background: '#FFFFFF',
+            border: '1px solid #E1E6ED',
+            borderRadius: '16px',
             overflow: 'hidden',
             height: '620px',
-            position: 'relative'
+            position: 'relative',
+            boxShadow: 'var(--shadow-card)'
           }}
         >
           {viewMode === '3D' ? (
@@ -394,13 +397,14 @@ export function AgvSimulationView() {
           {/* Dedicated Track Legend */}
           <div
             style={{
-              background: '#0f172a',
-              border: '1px solid #1e293b',
-              borderRadius: '8px',
-              padding: '12px'
+              background: '#FFFFFF',
+              border: '1px solid #E1E6ED',
+              borderRadius: '14px',
+              padding: '16px',
+              boxShadow: 'var(--shadow-card)'
             }}
           >
-            <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#94a3b8', marginBottom: '10px', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#17213A', marginBottom: '10px', letterSpacing: '0.5px' }}>
               DEDICATED TRACK LEGEND (ZERO TRAFFIC)
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
@@ -412,13 +416,14 @@ export function AgvSimulationView() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    background: selectedAgvId === item.id ? 'rgba(56, 189, 248, 0.15)' : '#070b14',
-                    border: `1px solid ${selectedAgvId === item.id ? item.color : '#1e293b'}`,
+                    padding: '5px 10px',
+                    borderRadius: '6px',
+                    background: selectedAgvId === item.id ? '#FFF8F0' : '#F8FAFC',
+                    border: `1px solid ${selectedAgvId === item.id ? '#E99A45' : '#E1E6ED'}`,
                     cursor: 'pointer',
                     fontSize: '11px',
-                    fontFamily: 'DM Mono, monospace'
+                    fontFamily: 'DM Mono, monospace',
+                    transition: 'all 0.15s ease'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -431,10 +436,10 @@ export function AgvSimulationView() {
                         boxShadow: `0 0 6px ${item.color}`
                       }}
                     />
-                    <b style={{ color: '#f1f5f9' }}>{item.id}</b>
-                    <span style={{ color: '#64748b' }}>(Track {i + 1})</span>
+                    <b style={{ color: '#17213A' }}>{item.id}</b>
+                    <span style={{ color: '#52627A' }}>(Track {i + 1})</span>
                   </div>
-                  <span style={{ fontSize: '9px', color: item.level === 'UPPER' ? '#38bdf8' : '#34d399', fontWeight: 'bold' }}>
+                  <span style={{ fontSize: '9px', color: item.level === 'UPPER' ? '#0284C7' : '#059669', fontWeight: 'bold' }}>
                     {item.level === 'UPPER' ? 'LEVEL 2 (Y=46)' : 'LEVEL 1 (GROUND)'}
                   </span>
                 </div>
@@ -445,13 +450,14 @@ export function AgvSimulationView() {
           {/* Simulation Controller */}
           <div
             style={{
-              background: '#0f172a',
-              border: '1px solid #1e293b',
-              borderRadius: '8px',
-              padding: '12px'
+              background: '#FFFFFF',
+              border: '1px solid #E1E6ED',
+              borderRadius: '14px',
+              padding: '16px',
+              boxShadow: 'var(--shadow-card)'
             }}
           >
-            <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#94a3b8', marginBottom: '10px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#17213A', marginBottom: '10px' }}>
               SIMULATION CONTROLLER
             </div>
 
@@ -459,18 +465,19 @@ export function AgvSimulationView() {
               <button
                 onClick={handleToggleSim}
                 style={{
-                  background: simRunning ? '#d97706' : '#059669',
+                  background: simRunning ? '#E99A45' : '#10B981',
                   color: '#ffffff',
                   border: 'none',
-                  borderRadius: '6px',
-                  padding: '9px',
+                  borderRadius: '8px',
+                  padding: '10px',
                   fontWeight: 'bold',
                   fontSize: '12px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(233, 154, 69, 0.25)'
                 }}
               >
                 <Sliders size={14} />
@@ -480,12 +487,13 @@ export function AgvSimulationView() {
               <button
                 onClick={handleResetSim}
                 style={{
-                  background: '#1e293b',
-                  color: '#e2e8f0',
-                  border: '1px solid #334155',
-                  borderRadius: '6px',
-                  padding: '7px',
-                  fontSize: '11px',
+                  background: '#F8FAFC',
+                  color: '#17213A',
+                  border: '1px solid #E1E6ED',
+                  borderRadius: '8px',
+                  padding: '8px',
+                  fontSize: '11.5px',
+                  fontWeight: '600',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -500,18 +508,19 @@ export function AgvSimulationView() {
               <button
                 onClick={handleTriggerRush}
                 style={{
-                  background: '#dc2626',
+                  background: '#EF4444',
                   color: '#ffffff',
                   border: 'none',
-                  borderRadius: '6px',
-                  padding: '7px',
-                  fontSize: '11px',
+                  borderRadius: '8px',
+                  padding: '8px',
+                  fontSize: '11.5px',
                   fontWeight: 'bold',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)'
                 }}
               >
                 <Flame size={13} />
@@ -520,8 +529,8 @@ export function AgvSimulationView() {
             </div>
 
             {/* Speed Multiplier */}
-            <div style={{ marginTop: '10px' }}>
-              <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '4px' }}>SPEED MULTIPLIER</div>
+            <div style={{ marginTop: '12px' }}>
+              <div style={{ fontSize: '10px', color: '#52627A', marginBottom: '6px', fontWeight: 'bold' }}>SPEED MULTIPLIER</div>
               <div style={{ display: 'flex', gap: '4px' }}>
                 {[0.5, 1, 2, 4].map(spd => (
                   <button
@@ -529,12 +538,13 @@ export function AgvSimulationView() {
                     onClick={() => setSimSpeed(spd)}
                     style={{
                       flex: 1,
-                      background: simSpeed === spd ? '#2563eb' : '#070b14',
-                      color: simSpeed === spd ? '#ffffff' : '#94a3b8',
-                      border: '1px solid #1e293b',
-                      borderRadius: '4px',
-                      padding: '4px 0',
-                      fontSize: '10px',
+                      background: simSpeed === spd ? '#17213A' : '#F8FAFC',
+                      color: simSpeed === spd ? '#ffffff' : '#52627A',
+                      border: '1px solid #E1E6ED',
+                      borderRadius: '6px',
+                      padding: '5px 0',
+                      fontSize: '10.5px',
+                      fontWeight: simSpeed === spd ? '700' : '600',
                       cursor: 'pointer'
                     }}
                   >
@@ -545,11 +555,11 @@ export function AgvSimulationView() {
             </div>
 
             {/* Visualization & Overlays */}
-            <div style={{ marginTop: '12px', borderTop: '1px solid #1e293b', paddingTop: '10px' }}>
-              <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '6px', fontWeight: 'bold' }}>
+            <div style={{ marginTop: '14px', borderTop: '1px solid #E9EEF5', paddingTop: '12px' }}>
+              <div style={{ fontSize: '10px', color: '#52627A', marginBottom: '8px', fontWeight: 'bold' }}>
                 VISUALIZATION &amp; OVERLAYS
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '10.5px', color: '#cbd5e1' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px', color: '#17213A' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
                   <input type="checkbox" checked={showHeatmap} onChange={e => setShowHeatmap(e.target.checked)} />
                   Show Corridor Heatmap
@@ -586,20 +596,21 @@ export function AgvSimulationView() {
           display: 'grid',
           gridTemplateColumns: 'repeat(5, 1fr)',
           gap: '12px',
-          background: '#070b14',
-          border: '1px solid #1e293b',
-          borderRadius: '10px',
-          padding: '14px',
-          marginBottom: '12px'
+          background: '#FFFFFF',
+          border: '1px solid #E1E6ED',
+          borderRadius: '14px',
+          padding: '18px',
+          marginBottom: '14px',
+          boxShadow: 'var(--shadow-card)'
         }}
       >
         {/* Column 1 */}
         <div>
-          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#f59e0b', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <Layers size={13} color="#f59e0b" />
+          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#E99A45', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Layers size={13} color="#E99A45" />
             DEDICATED TRACK ARCHITECTURE
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#94a3b8' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#52627A' }}>
             <div>☑️ Every robot has its own track</div>
             <div>☑️ Tracks are separated (parallel/elevated)</div>
             <div>☑️ No two robots share the same track</div>
@@ -610,11 +621,11 @@ export function AgvSimulationView() {
 
         {/* Column 2 */}
         <div>
-          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#f59e0b', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <Sparkles size={13} color="#f59e0b" />
+          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#E99A45', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Sparkles size={13} color="#E99A45" />
             TRACK DESIGN (3D MULTI-LEVEL)
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#94a3b8' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#52627A' }}>
             <div>☑️ Parallel tracks (left/right offset)</div>
             <div>☑️ Elevated tracks (different heights)</div>
             <div>☑️ Smooth curves with banking</div>
@@ -625,11 +636,11 @@ export function AgvSimulationView() {
 
         {/* Column 3 */}
         <div>
-          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#f59e0b', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <Bot size={13} color="#f59e0b" />
+          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#E99A45', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Bot size={13} color="#E99A45" />
             ROBOT BEHAVIOR
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#94a3b8' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#52627A' }}>
             <div>☑️ Always stays on its assigned track</div>
             <div>☑️ Never interferes with other robots</div>
             <div>☑️ No stops, no traffic, no deadlocks</div>
@@ -640,11 +651,11 @@ export function AgvSimulationView() {
 
         {/* Column 4 */}
         <div>
-          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#f59e0b', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <Cpu size={13} color="#f59e0b" />
+          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#E99A45', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Cpu size={13} color="#E99A45" />
             PERFORMANCE
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#94a3b8' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#52627A' }}>
             <div>☑️ 60 FPS Smooth Rendering</div>
             <div>☑️ 10+ robots simultaneously</div>
             <div>☑️ Optimized instanced meshes</div>
@@ -655,11 +666,11 @@ export function AgvSimulationView() {
 
         {/* Column 5 */}
         <div>
-          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#f59e0b', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <Award size={13} color="#f59e0b" />
+          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#E99A45', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Award size={13} color="#E99A45" />
             FINAL OUTCOME
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#94a3b8' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '10.5px', color: '#52627A' }}>
             <div>☑️ Zero traffic</div>
             <div>☑️ Zero collisions</div>
             <div>☑️ Zero stops</div>
@@ -675,12 +686,12 @@ export function AgvSimulationView() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: '#0a0f1d',
-          border: '1px solid #1e293b',
+          background: '#F8FAFC',
+          border: '1px solid #E1E6ED',
           borderRadius: '8px',
           padding: '8px 14px',
           fontSize: '11px',
-          color: '#64748b'
+          color: '#52627A'
         }}
       >
         <div style={{ display: 'flex', gap: '16px' }}>
@@ -689,7 +700,7 @@ export function AgvSimulationView() {
           <span>🔍 <b>Scroll:</b> Zoom</span>
           <span>🎯 <b>Double-Click on AGV:</b> Focus</span>
         </div>
-        <div style={{ color: '#38bdf8', fontWeight: 'bold' }}>
+        <div style={{ color: '#E99A45', fontWeight: 'bold' }}>
           All robots move simultaneously on their dedicated tracks – no traffic, no congestion, 100% continuous operation.
         </div>
       </div>

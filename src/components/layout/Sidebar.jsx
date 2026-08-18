@@ -1,48 +1,53 @@
 import React, { useState } from 'react';
 import { useWms } from '../../context/WmsContext';
 import { ZONES } from '../../data/initialWarehouse';
-import { UserProfileModal } from './UserProfileModal';
+import { WAREHOUSE_LOCATIONS } from '../../data/warehouseLocations';
 import { 
+  Building2, 
   MapPin, 
+  Bot, 
   ClipboardList, 
   Package, 
   Truck, 
   BarChart3, 
   Smartphone, 
-  ChevronRight, 
-  Bot,
-  Building2,
+  ChevronRight,
   Navigation
 } from 'lucide-react';
+import { UserProfileModal } from './UserProfileModal';
 
 export function Sidebar() {
   const { 
-    selectedWarehouseId,
-    warehouseLocations,
-    switchWarehouse,
-    selectedZone, 
-    setSelectedZone, 
     viewMode, 
     setViewMode, 
-    setRole,
+    setRole, 
+    selectedZone, 
+    setSelectedZone, 
     orders, 
-    purchaseOrders,
+    metrics, 
+    warehouseData,
+    selectedWarehouseId,
+    switchWarehouse,
     userProfile,
     logoutUser,
-    addToast,
-    metrics
+    addToast
   } = useWms();
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  const activeOrdersCount = orders.filter(o => o.status !== 'DISPATCHED').length;
-  const pendingPOCount = purchaseOrders.length;
+  const activeOrdersCount = (orders || []).filter(o => o.status !== 'DISPATCHED').length;
+  const currentWh = warehouseData?.[selectedWarehouseId] || warehouseData?.KAKINADA || {};
+  const pendingPOCount = (currentWh?.purchaseOrders || []).filter(po => po.status === 'PENDING_APPROVAL').length;
+  const warehouseLocations = WAREHOUSE_LOCATIONS || [
+    { id: 'KAKINADA', name: "Sai's Warehouse — Kakinada Hub", city: 'Kakinada', district: 'East Godavari' },
+    { id: 'VIJAYAWADA', name: "Sai's Warehouse — Vijayawada Hub", city: 'Vijayawada', district: 'NTR District' }
+  ];
 
   return (
     <aside role="complementary" aria-label="Warehouse Facilities and Navigation Panel">
       {/* Brand: Sai's Warehouse */}
       <div className="brand">
-        <div className="brand-mark" style={{ background: 'linear-gradient(135deg, #2563eb, #7c3aed)' }} aria-hidden="true">
+        <div className="brand-mark" style={{ background: 'linear-gradient(135deg, #17213A, #263653)' }} aria-hidden="true">
           <Building2 size={20} color="#fff" />
         </div>
         <div className="brand-title">
@@ -52,8 +57,8 @@ export function Sidebar() {
       </div>
 
       {/* Warehouse Locations Switcher (Kakinada & Vijayawada) */}
-      <div className="facility-section-title" style={{ color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <Navigation size={11} color="#38bdf8" aria-hidden="true" />
+      <div className="facility-section-title" style={{ color: '#52627A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <Navigation size={11} color="#E99A45" aria-hidden="true" />
         ACTIVE WAREHOUSE HUB
       </div>
       <div className="facility-switch-grid" role="group" aria-label="Warehouse Location Switcher" style={{ display: 'grid', gap: '6px', marginBottom: '14px' }}>
@@ -71,19 +76,19 @@ export function Sidebar() {
                 justifyContent: 'space-between',
                 padding: '8px 10px',
                 borderRadius: '8px',
-                border: isActive ? '1.5px solid #38bdf8' : '1px solid #28334e',
-                background: isActive ? '#172554' : '#111827',
-                color: isActive ? '#fff' : '#94a3b8',
+                border: isActive ? '1.5px solid #E99A45' : '1px solid #E1E6ED',
+                background: isActive ? '#FFF8F0' : '#FFFFFF',
+                color: isActive ? '#17213A' : '#52627A',
                 cursor: 'pointer',
                 textAlign: 'left',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.18s ease'
               }}
             >
               <div>
-                <div style={{ fontSize: '11.5px', fontWeight: 'bold', color: isActive ? '#38bdf8' : '#e2e8f0' }}>
+                <div style={{ fontSize: '11.5px', fontWeight: 'bold', color: isActive ? '#17213A' : '#263653' }}>
                   {loc.city} Hub
                 </div>
-                <div style={{ fontSize: '9px', color: isActive ? '#93c5fd' : '#64748b' }}>
+                <div style={{ fontSize: '9px', color: isActive ? '#8A96A8' : '#8A96A8' }}>
                   {loc.district}
                 </div>
               </div>
@@ -92,8 +97,8 @@ export function Sidebar() {
                   fontSize: '8.5px',
                   padding: '2px 6px',
                   borderRadius: '10px',
-                  background: isActive ? '#2563eb' : '#1e293b',
-                  color: isActive ? '#fff' : '#64748b',
+                  background: isActive ? '#E99A45' : '#F1F5F9',
+                  color: isActive ? '#FFFFFF' : '#64748B',
                   fontWeight: 'bold'
                 }}
               >
@@ -147,15 +152,14 @@ export function Sidebar() {
           className={viewMode === 'AGV_SIMULATION' ? 'active' : ''}
           aria-current={viewMode === 'AGV_SIMULATION' ? 'page' : undefined}
           aria-label="View Autonomous Mobile Robots (AGV) 3D Fleet Simulation"
-          style={viewMode === 'AGV_SIMULATION' ? { background: '#1e2640', color: '#60a5fa' } : {}}
           onClick={() => {
             setViewMode('AGV_SIMULATION');
             setRole('MANAGER');
           }}
         >
-          <Bot size={15} color="#38bdf8" aria-hidden="true" />
+          <Bot size={15} color="#E99A45" aria-hidden="true" />
           <span>AGV / AMR Fleet Sim</span>
-          <b style={{ background: '#2563eb', color: '#fff' }}>ROBOTS</b>
+          <b style={{ background: '#17213A', color: '#fff' }}>ROBOTS</b>
         </button>
 
         <button
@@ -196,7 +200,7 @@ export function Sidebar() {
         >
           <Truck size={15} aria-hidden="true" />
           <span>Inbound Supply POs</span>
-          {pendingPOCount > 0 && <b style={{ background: '#f0b44c', color: '#111' }}>{pendingPOCount}</b>}
+          {pendingPOCount > 0 && <b style={{ background: '#F59E0B', color: '#FFFFFF' }}>{pendingPOCount}</b>}
         </button>
 
         <button
@@ -223,7 +227,7 @@ export function Sidebar() {
         >
           <Smartphone size={15} aria-hidden="true" />
           <span>Floor Picker Terminal</span>
-          <b style={{ background: '#32d49b', color: '#111' }}>LIVE</b>
+          <b style={{ background: '#10B981', color: '#FFFFFF' }}>LIVE</b>
         </button>
       </nav>
 
@@ -242,7 +246,7 @@ export function Sidebar() {
           type="button"
           className="operator profile-container"
           onClick={() => setIsProfileModalOpen(true)}
-          style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s ease' }}
+          style={{ width: '100%', border: '1px solid #E1E6ED', background: '#F8FAFC', textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s ease' }}
           aria-label="Open user profile settings and system credentials"
         >
           <div className="worker-avatar profile-avatar" aria-hidden="true">

@@ -115,8 +115,8 @@ export function AgvWarehouse3DCanvas({
 
     // 1. Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#070b14');
-    scene.fog = new THREE.FogExp2('#070b14', 0.0008);
+    scene.background = new THREE.Color('#F6F8FB');
+    scene.fog = new THREE.FogExp2('#F6F8FB', 0.0004);
     sceneRef.current = scene;
 
     // 2. Camera
@@ -129,16 +129,16 @@ export function AgvWarehouse3DCanvas({
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.1;
     rendererRef.current = renderer;
 
     container.replaceChildren(renderer.domElement);
 
     // 4. Lighting
-    const ambientLight = new THREE.AmbientLight('#ffffff', 0.9);
+    const ambientLight = new THREE.AmbientLight('#ffffff', 1.1);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight('#e0e7ff', 1.5);
+    const dirLight = new THREE.DirectionalLight('#ffffff', 1.4);
     dirLight.position.set(300, 500, 250);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 2048;
@@ -146,23 +146,23 @@ export function AgvWarehouse3DCanvas({
     dirLight.shadow.bias = -0.0004;
     scene.add(dirLight);
 
-    const blueRimLight = new THREE.DirectionalLight('#38bdf8', 0.7);
+    const blueRimLight = new THREE.DirectionalLight('#E99A45', 0.4);
     blueRimLight.position.set(-350, 250, -250);
     scene.add(blueRimLight);
 
     // 5. Floor & Factory Base
     const floorGeo = new THREE.PlaneGeometry(1300, 950);
     const floorMat = new THREE.MeshStandardMaterial({
-      color: '#0c1322',
-      roughness: 0.85,
-      metalness: 0.15
+      color: '#EEF2F7',
+      roughness: 0.9,
+      metalness: 0.05
     });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     scene.add(floor);
 
-    const gridHelper = new THREE.GridHelper(1300, 65, '#1e293b', '#111827');
+    const gridHelper = new THREE.GridHelper(1300, 65, '#CBD5E1', '#E2E8F0');
     gridHelper.position.y = 0.15;
     scene.add(gridHelper);
 
@@ -1487,48 +1487,49 @@ export function AgvWarehouse3DCanvas({
           position: 'absolute',
           top: '12px',
           left: '12px',
-          background: 'rgba(10, 15, 29, 0.92)',
+          background: 'rgba(255, 255, 255, 0.92)',
           backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(56, 189, 248, 0.25)',
-          borderRadius: '8px',
-          padding: '12px',
-          width: '210px',
-          zIndex: 10
+          border: '1px solid #E1E6ED',
+          borderRadius: '12px',
+          padding: '12px 14px',
+          width: '220px',
+          zIndex: 10,
+          boxShadow: '0 4px 16px rgba(23, 33, 58, 0.08)'
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-          <b style={{ fontSize: '12px', color: '#e2e8f0', letterSpacing: '0.5px' }}>FLEET OVERVIEW</b>
-          <span style={{ background: '#064e3b', color: '#34d399', fontSize: '9px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px' }}>
+          <b style={{ fontSize: '12px', color: '#17213A', letterSpacing: '0.5px' }}>FLEET OVERVIEW</b>
+          <span style={{ background: '#ECFDF5', color: '#059669', border: '1px solid #A7F3D0', fontSize: '9px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px' }}>
             100% ONLINE
           </span>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px', textAlign: 'center', marginBottom: '10px' }}>
-          <div style={{ background: '#0f172a', padding: '4px 2px', borderRadius: '4px' }}>
-            <div style={{ fontSize: '8.5px', color: '#64748b' }}>TOTAL</div>
-            <strong style={{ fontSize: '14px', color: '#38bdf8' }}>10</strong>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E1E6ED', padding: '4px 2px', borderRadius: '6px' }}>
+            <div style={{ fontSize: '8.5px', color: '#52627A' }}>TOTAL</div>
+            <strong style={{ fontSize: '14px', color: '#17213A' }}>10</strong>
           </div>
-          <div style={{ background: '#0f172a', padding: '4px 2px', borderRadius: '4px' }}>
-            <div style={{ fontSize: '8.5px', color: '#64748b' }}>ACTIVE</div>
-            <strong style={{ fontSize: '14px', color: '#34d399' }}>10</strong>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E1E6ED', padding: '4px 2px', borderRadius: '6px' }}>
+            <div style={{ fontSize: '8.5px', color: '#52627A' }}>ACTIVE</div>
+            <strong style={{ fontSize: '14px', color: '#059669' }}>10</strong>
           </div>
-          <div style={{ background: '#0f172a', padding: '4px 2px', borderRadius: '4px' }}>
-            <div style={{ fontSize: '8.5px', color: '#64748b' }}>IDLE</div>
-            <strong style={{ fontSize: '14px', color: '#94a3b8' }}>0</strong>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E1E6ED', padding: '4px 2px', borderRadius: '6px' }}>
+            <div style={{ fontSize: '8.5px', color: '#52627A' }}>IDLE</div>
+            <strong style={{ fontSize: '14px', color: '#94A3B8' }}>0</strong>
           </div>
-          <div style={{ background: '#0f172a', padding: '4px 2px', borderRadius: '4px' }}>
-            <div style={{ fontSize: '8.5px', color: '#64748b' }}>CHARGING</div>
-            <strong style={{ fontSize: '14px', color: '#818cf8' }}>0</strong>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E1E6ED', padding: '4px 2px', borderRadius: '6px' }}>
+            <div style={{ fontSize: '8.5px', color: '#52627A' }}>CHARGING</div>
+            <strong style={{ fontSize: '14px', color: '#E99A45' }}>0</strong>
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderTop: '1px solid #1e293b', fontSize: '11px' }}>
-          <span style={{ color: '#94a3b8' }}>ACTIVE MISSIONS</span>
-          <b style={{ color: '#34d399' }}>10</b>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderTop: '1px solid #E9EEF5', fontSize: '11px' }}>
+          <span style={{ color: '#52627A' }}>ACTIVE MISSIONS</span>
+          <b style={{ color: '#059669' }}>10</b>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: '11px' }}>
-          <span style={{ color: '#94a3b8' }}>UTILIZATION</span>
-          <b style={{ color: '#818cf8' }}>100%</b>
+          <span style={{ color: '#52627A' }}>UTILIZATION</span>
+          <b style={{ color: '#E99A45' }}>100%</b>
         </div>
       </div>
 
@@ -1546,20 +1547,21 @@ export function AgvWarehouse3DCanvas({
         {/* AUTOMATED PACKING ROOM */}
         <div
           style={{
-            background: 'rgba(10, 15, 29, 0.92)',
+            background: 'rgba(255, 255, 255, 0.92)',
             backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(56, 189, 248, 0.3)',
-            borderRadius: '8px',
+            border: '1px solid #E1E6ED',
+            borderRadius: '12px',
             padding: '10px 14px',
-            minWidth: '260px'
+            minWidth: '260px',
+            boxShadow: '0 4px 16px rgba(23, 33, 58, 0.08)'
           }}
         >
-          <div style={{ fontSize: '10.5px', fontWeight: 'bold', color: '#38bdf8', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <div style={{ fontSize: '10.5px', fontWeight: 'bold', color: '#1D4ED8', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <BoxIcon size={13} color="#38bdf8" />
+              <BoxIcon size={13} color="#1D4ED8" />
               AUTOMATED PACKING ROOM
             </span>
-            <span style={{ fontSize: '8.5px', background: '#0284c7', color: '#fff', padding: '1px 5px', borderRadius: '4px' }}>
+            <span style={{ fontSize: '8.5px', background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE', padding: '1px 5px', borderRadius: '4px' }}>
               5 STATIONS
             </span>
           </div>
@@ -1568,21 +1570,21 @@ export function AgvWarehouse3DCanvas({
               <div
                 key={bay}
                 style={{
-                  background: '#0f172a',
-                  border: '1px solid #1e293b',
+                  background: '#F8FAFC',
+                  border: '1px solid #E1E6ED',
                   borderRadius: '4px',
                   padding: '4px 2px',
                   textAlign: 'center',
                   fontSize: '8.5px',
-                  color: '#e2e8f0'
+                  color: '#17213A'
                 }}
               >
                 <div>{bay}</div>
-                <CheckCircle2 size={10} color="#34d399" style={{ margin: '2px auto 0' }} />
+                <CheckCircle2 size={10} color="#10B981" style={{ margin: '2px auto 0' }} />
               </div>
             ))}
           </div>
-          <div style={{ fontSize: '8px', color: '#94a3b8', marginTop: '6px', textAlign: 'center' }}>
+          <div style={{ fontSize: '8px', color: '#52627A', marginTop: '6px', textAlign: 'center' }}>
             📦 Carton Taping &bull; Polybag Sealing &bull; Laser Scan
           </div>
         </div>
@@ -1590,20 +1592,21 @@ export function AgvWarehouse3DCanvas({
         {/* MOTORIZED CONVEYOR & PICKING PLATFORM */}
         <div
           style={{
-            background: 'rgba(10, 15, 29, 0.92)',
+            background: 'rgba(255, 255, 255, 0.92)',
             backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(99, 102, 241, 0.3)',
-            borderRadius: '8px',
+            border: '1px solid #E1E6ED',
+            borderRadius: '12px',
             padding: '10px 14px',
-            minWidth: '240px'
+            minWidth: '240px',
+            boxShadow: '0 4px 16px rgba(23, 33, 58, 0.08)'
           }}
         >
-          <div style={{ fontSize: '10.5px', fontWeight: 'bold', color: '#818cf8', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <div style={{ fontSize: '10.5px', fontWeight: 'bold', color: '#4338CA', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Truck size={13} color="#818cf8" />
+              <Truck size={13} color="#4338CA" />
               PICKING &amp; DISPATCH PLATFORM
             </span>
-            <span style={{ fontSize: '8.5px', background: '#4f46e5', color: '#fff', padding: '1px 5px', borderRadius: '4px' }}>
+            <span style={{ fontSize: '8.5px', background: '#EEF2FF', color: '#4338CA', border: '1px solid #C7D2FE', padding: '1px 5px', borderRadius: '4px' }}>
               CONVEYOR ACTIVE
             </span>
           </div>
@@ -1613,21 +1616,21 @@ export function AgvWarehouse3DCanvas({
                 key={dock}
                 style={{
                   flex: 1,
-                  background: '#0f172a',
-                  border: '1px solid #1e293b',
+                  background: '#F8FAFC',
+                  border: '1px solid #E1E6ED',
                   borderRadius: '5px',
                   padding: '4px 6px',
                   fontSize: '9px',
-                  color: '#93c5fd',
+                  color: '#17213A',
                   textAlign: 'center'
                 }}
               >
                 <b>{dock} &bull; ACTIVE</b>
-                <div style={{ fontSize: '7.5px', color: '#64748b' }}>Conveyor Intake</div>
+                <div style={{ fontSize: '7.5px', color: '#52627A' }}>Conveyor Intake</div>
               </div>
             ))}
           </div>
-          <div style={{ fontSize: '8px', color: '#94a3b8', marginTop: '6px', textAlign: 'center' }}>
+          <div style={{ fontSize: '8px', color: '#52627A', marginTop: '6px', textAlign: 'center' }}>
             🚚 Continuous Parcel Flow to Courier Staging
           </div>
         </div>
@@ -1635,20 +1638,21 @@ export function AgvWarehouse3DCanvas({
         {/* CHARGING STATIONS (10 INDIVIDUAL DEDICATED PORTS) */}
         <div
           style={{
-            background: 'rgba(10, 15, 29, 0.92)',
+            background: 'rgba(255, 255, 255, 0.92)',
             backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(16, 185, 129, 0.25)',
-            borderRadius: '8px',
+            border: '1px solid #E1E6ED',
+            borderRadius: '12px',
             padding: '10px 14px',
-            minWidth: '340px'
+            minWidth: '340px',
+            boxShadow: '0 4px 16px rgba(23, 33, 58, 0.08)'
           }}
         >
-          <div style={{ fontSize: '10.5px', fontWeight: 'bold', color: '#34d399', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <div style={{ fontSize: '10.5px', fontWeight: 'bold', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Zap size={13} color="#34d399" />
+              <Zap size={13} color="#059669" />
               10 DEDICATED CHARGING PORTS (1 PER AMR)
             </span>
-            <span style={{ fontSize: '9px', color: '#6ee7b7', background: '#064e3b', padding: '1px 6px', borderRadius: '4px' }}>
+            <span style={{ fontSize: '9px', color: '#059669', background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '1px 6px', borderRadius: '4px' }}>
               ALL PORTS ACTIVE
             </span>
           </div>
@@ -1657,17 +1661,17 @@ export function AgvWarehouse3DCanvas({
               <div
                 key={chg.id}
                 style={{
-                  background: '#07151e',
-                  border: '1px solid #0f3d32',
+                  background: '#F8FAFC',
+                  border: '1px solid #E1E6ED',
                   borderRadius: '4px',
                   padding: '3px 2px',
                   textAlign: 'center',
                   fontSize: '8.5px',
-                  color: '#a7f3d0'
+                  color: '#17213A'
                 }}
               >
                 <div style={{ fontWeight: 'bold' }}>{chg.id}</div>
-                <div style={{ fontSize: '7.5px', color: '#6ee7b7' }}>{chg.agvId}</div>
+                <div style={{ fontSize: '7.5px', color: '#059669' }}>{chg.agvId}</div>
               </div>
             ))}
           </div>

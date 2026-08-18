@@ -1,8 +1,8 @@
 export const ORDER_PRIORITY = {
-  VIP: { label: 'VIP Priority', score: 100, color: '#c5adff', bg: '#392c59', badgeClass: 'priority' },
-  EXPRESS: { label: 'Express (10-Min)', score: 50, color: '#ffc16b', bg: '#4b3520', badgeClass: 'express' },
-  STANDARD: { label: 'Standard', score: 10, color: '#90a0b8', bg: '#1c2436', badgeClass: 'standard' },
-  BULK: { label: 'Bulk Batch', score: 5, color: '#68d4a6', bg: '#153d30', badgeClass: 'bulk' }
+  VIP: { label: 'VIP Priority', score: 100, color: '#4338CA', bg: '#EEF2FF', badgeClass: 'priority' },
+  EXPRESS: { label: 'Express (10-Min)', score: 50, color: '#C2410C', bg: '#FFF7ED', badgeClass: 'express' },
+  STANDARD: { label: 'Standard', score: 10, color: '#475569', bg: '#F1F5F9', badgeClass: 'standard' },
+  BULK: { label: 'Bulk Batch', score: 5, color: '#065F46', bg: '#ECFDF5', badgeClass: 'bulk' }
 };
 
 export const ORDER_STATUS = {

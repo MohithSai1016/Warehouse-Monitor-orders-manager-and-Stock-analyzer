@@ -9,17 +9,17 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
   return (
     <>
       {/* 1. Floor & Grid Background */}
-      <rect width={MAP_CONFIG.width} height={MAP_CONFIG.height} fill="#090d16" />
+      <rect width={MAP_CONFIG.width} height={MAP_CONFIG.height} fill="#F8FAFC" />
       <rect width={MAP_CONFIG.width} height={MAP_CONFIG.height} fill="url(#gridFloor)" />
 
       {/* 2. Walkable AGV Corridor Guideway Tracks (Floor Lines) */}
-      <g className="corridor-lines" stroke="rgba(120, 135, 255, 0.12)" strokeWidth="2" strokeDasharray="5,5">
+      <g className="corridor-lines" stroke="rgba(82, 98, 122, 0.15)" strokeWidth="2" strokeDasharray="5,5">
         {/* North Arterial Highway */}
-        <line x1="30" y1="35" x2="925" y2="35" stroke="rgba(56, 189, 248, 0.25)" strokeWidth="2.5" />
+        <line x1="30" y1="35" x2="925" y2="35" stroke="rgba(233, 154, 69, 0.35)" strokeWidth="2.5" />
         {/* Center Cross-Corridor */}
-        <line x1="30" y1="195" x2="925" y2="195" stroke="rgba(129, 140, 248, 0.25)" strokeWidth="2" />
+        <line x1="30" y1="195" x2="925" y2="195" stroke="rgba(23, 33, 58, 0.25)" strokeWidth="2" />
         {/* South Arterial Highway */}
-        <line x1="30" y1="365" x2="925" y2="365" stroke="rgba(56, 189, 248, 0.35)" strokeWidth="3" />
+        <line x1="30" y1="365" x2="925" y2="365" stroke="rgba(233, 154, 69, 0.45)" strokeWidth="3" />
         
         {/* Vertical Aisle Guideways */}
         {[175, 325, 475, 625, 775, 925].map(x => (
@@ -28,7 +28,7 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
 
         {/* Dedicated Depot Connections */}
         {[60, 100, 140, 180, 220].map(x => (
-          <line key={`depot-line-${x}`} x1={x} y1="365" x2={x} y2="480" stroke="rgba(56, 189, 248, 0.3)" />
+          <line key={`depot-line-${x}`} x1={x} y1="365" x2={x} y2="480" stroke="rgba(59, 130, 246, 0.3)" />
         ))}
 
         {/* Courier Dispatch Connections */}
@@ -51,14 +51,14 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
             width={rack.width}
             height={rack.height}
             rx="6"
-            fill="#101726"
-            stroke="#243048"
+            fill="#FFFFFF"
+            stroke="#E1E6ED"
             strokeWidth="1.5"
           />
           {/* Shelf Shelves Interior Lines */}
-          <line x1={rack.x + 8} y1={rack.y + 28} x2={rack.x + rack.width - 8} y2={rack.y + 28} stroke="#1e293b" strokeWidth="1.5" />
-          <line x1={rack.x + 8} y1={rack.y + 55} x2={rack.x + rack.width - 8} y2={rack.y + 55} stroke="#1e293b" strokeWidth="1.5" />
-          <line x1={rack.x + 8} y1={rack.y + 82} x2={rack.x + rack.width - 8} y2={rack.y + 82} stroke="#1e293b" strokeWidth="1.5" />
+          <line x1={rack.x + 8} y1={rack.y + 28} x2={rack.x + rack.width - 8} y2={rack.y + 28} stroke="#F1F5F9" strokeWidth="1.5" />
+          <line x1={rack.x + 8} y1={rack.y + 55} x2={rack.x + rack.width - 8} y2={rack.y + 55} stroke="#F1F5F9" strokeWidth="1.5" />
+          <line x1={rack.x + 8} y1={rack.y + 82} x2={rack.x + rack.width - 8} y2={rack.y + 82} stroke="#F1F5F9" strokeWidth="1.5" />
           
           {/* Zone Color Top Strip */}
           <rect
@@ -78,7 +78,7 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
                 x={rack.x + rack.width / 2}
                 y={rack.y + 19}
                 textAnchor="middle"
-                fill="#cbd5e1"
+                fill="#17213A"
                 fontSize="10"
                 fontFamily="DM Mono, monospace"
                 fontWeight="700"
@@ -89,7 +89,7 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
                 x={rack.x + rack.width / 2}
                 y={rack.y + 44}
                 textAnchor="middle"
-                fill="#64748b"
+                fill="#64748B"
                 fontSize="8"
                 fontFamily="Manrope, sans-serif"
               >
@@ -99,7 +99,7 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
                 x={rack.x + rack.width / 2}
                 y={rack.y + 98}
                 textAnchor="middle"
-                fill="#94a3b8"
+                fill="#52627A"
                 fontSize="7.5"
                 fontFamily="Manrope, sans-serif"
                 fontWeight="600"
@@ -119,8 +119,8 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
           width={MAP_CONFIG.depotArea.width}
           height={MAP_CONFIG.depotArea.height}
           rx="8"
-          fill="url(#depotGrad)"
-          stroke="#0284c7"
+          fill="#EFF6FF"
+          stroke="#3B82F6"
           strokeWidth="1.5"
           strokeDasharray="6,4"
         />
@@ -128,7 +128,7 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
           x={MAP_CONFIG.depotArea.x + MAP_CONFIG.depotArea.width / 2}
           y={MAP_CONFIG.depotArea.y + 22}
           textAnchor="middle"
-          fill="#38bdf8"
+          fill="#1D4ED8"
           fontSize="10"
           fontFamily="Manrope, sans-serif"
           fontWeight="800"
@@ -141,14 +141,14 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
           const posX = MAP_CONFIG.depotArea.x + 8 + (bay - 1) * 42;
           return (
             <g key={bay} transform={`translate(${posX}, ${MAP_CONFIG.depotArea.y + 35})`}>
-              <rect width="36" height="65" rx="5" fill="#07111e" stroke="#0284c7" strokeWidth="1" />
-              <text x="18" y="16" textAnchor="middle" fill="#38bdf8" fontSize="8" fontWeight="700" fontFamily="DM Mono">
+              <rect width="36" height="65" rx="5" fill="#FFFFFF" stroke="#93C5FD" strokeWidth="1" />
+              <text x="18" y="16" textAnchor="middle" fill="#1E40AF" fontSize="8" fontWeight="700" fontFamily="DM Mono">
                 BAY 0{bay}
               </text>
-              <text x="18" y="38" textAnchor="middle" fill="#6ee7b7" fontSize="10">
+              <text x="18" y="38" textAnchor="middle" fill="#10B981" fontSize="10">
                 ✓
               </text>
-              <text x="18" y="54" textAnchor="middle" fill="#64748b" fontSize="6.5" fontFamily="Manrope">
+              <text x="18" y="54" textAnchor="middle" fill="#64748B" fontSize="6.5" fontFamily="Manrope">
                 Ready
               </text>
             </g>
@@ -164,15 +164,15 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
           width={MAP_CONFIG.shippingArea.width}
           height={MAP_CONFIG.shippingArea.height}
           rx="8"
-          fill="#0c1020"
-          stroke="#4f46e5"
+          fill="#EEF2FF"
+          stroke="#6366F1"
           strokeWidth="1.5"
         />
         <text
           x={MAP_CONFIG.shippingArea.x + MAP_CONFIG.shippingArea.width / 2}
           y={MAP_CONFIG.shippingArea.y + 22}
           textAnchor="middle"
-          fill="#818cf8"
+          fill="#4338CA"
           fontSize="10"
           fontFamily="Manrope, sans-serif"
           fontWeight="800"
@@ -183,11 +183,11 @@ const StaticWarehouseMap = memo(function StaticWarehouseMap({
           const posX = MAP_CONFIG.shippingArea.x + 20 + (d - 1) * 105;
           return (
             <g key={d} transform={`translate(${posX}, ${MAP_CONFIG.shippingArea.y + 35})`}>
-              <rect width="90" height="65" rx="5" fill="#030712" stroke="#1e3a8a" strokeWidth="1" />
-              <text x="45" y="18" textAnchor="middle" fill="#38bdf8" fontSize="8.5" fontWeight="700" fontFamily="DM Mono">
+              <rect width="90" height="65" rx="5" fill="#FFFFFF" stroke="#C7D2FE" strokeWidth="1" />
+              <text x="45" y="18" textAnchor="middle" fill="#4338CA" fontSize="8.5" fontWeight="700" fontFamily="DM Mono">
                 DOCK 0{d} - ACTIVE
               </text>
-              <text x="45" y="40" textAnchor="middle" fill="#64748b" fontSize="7.5" fontFamily="Manrope">
+              <text x="45" y="40" textAnchor="middle" fill="#64748B" fontSize="7.5" fontFamily="Manrope">
                 Express Courier
               </text>
             </g>
