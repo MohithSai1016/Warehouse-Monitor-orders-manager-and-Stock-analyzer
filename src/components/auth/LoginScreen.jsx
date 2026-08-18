@@ -21,6 +21,7 @@ import {
   Fingerprint
 } from 'lucide-react';
 import { useWms } from '../../context/WmsContext';
+import warehouseLoginBg from '../../assets/warehouse-login-bg.jpg';
 
 export function LoginScreen() {
   const { loginUser } = useWms();
@@ -255,7 +256,7 @@ export function LoginScreen() {
       <div 
         className={`login-bg-layer ${stage !== 'IMAGE_ONLY' ? 'blurred-active' : ''}`}
         style={{
-          backgroundImage: `url('/warehouse-login-bg.jpg')`
+          backgroundImage: `url(${warehouseLoginBg})`
         }}
       />
 
